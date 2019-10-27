@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+    <head>
+        <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <title>Web App Client</title>
+    </head>
+      <body>
+        <div class="container">
+            <h1>Gestor Imagenes</h1><br>
+            <div class="row">
+                <div class="col">
+                    <form class="card" action="listImages" method="GET">
+                        <div class="card-body">
+                            <div class="card-title"><h4>Llistar totes les imatges</h4></div>
+                        <button type="submit" class="btn btn-primary">Llistar Imatges</button> <br><br>
+                        </div>
+                    </form>
+                </div>
+                <div class="col">
+                    <form class= "card" action="searchImage" method="POST">
+                        <div class="card-body">
+                            <div class="card-title"><h4>Buscar una imatge</h4></div>
+                            <div class="form-group">
+                                <label for="camp">Selecciona camp a buscar</label>
+                                <select class="form-control" id="camp" name="camp">
+                                  <option>ID</option>
+                                  <option>Autor</option>
+                                  <option>Titol</option>
+                                  <option>Data Creacio</option>
+                                  <option>Keywords</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="valorCerca">Introdueix cerca:</label>
+                                <input type="text" class="form-control" id="valorCerca" name="valorCerca">
+                            </div>
+                            <button type="submit" class="btn btn-primary">Cerca</button> <br><br>
+                        </div>
+                    </form>
+                </div>
+            </div><br>
+            <div class="row">
+                <div class="col">
+                    <form class="card" action="modifyImage" method="POST">
+                        <div class="card-body">
+                            <div class="card-title"><h4>Modifica una imatge</h4></div>
+                            <div class="form-group">
+                                <label for="id">Introdueix ID:</label>
+                                <input type="text" class="form-control" id="id" name="id">
+                            </div>
+                            <div class="form-group">
+                                <label for="camp">Selecciona camp a modificar</label>
+                                <select class="form-control" id="camp" name="camp">
+                                  <option>Autor</option>
+                                  <option>Titol</option>
+                                  <option>Descripcio</option>
+                                  <option>Data Creacio</option>
+                                  <option>Keywords</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="valor">Introdueix nou valor:</label>
+                                <input type="text" class="form-control" id="valor" name="valor">
+                            </div>
+                            <button type="submit" class="btn btn-primary">Modifica</button>
+                        </div>
+                    </form><br><br>
+                </div>
+                <div class="col">
+                    <form class="card" action="registerImage" method="POST">
+                        <div class="card-body">
+                        <div class="card-title"><h4>Registra una imatge</h4></div>
+                        <div class="form-group">
+                            <label for="titol">Introdueix titol:</label>
+                            <input type="text" class="form-control" id="titol" name="titol">
+                        </div>
+                        <div class="form-group">
+                            <label for="autor">Introdueix autor:</label>
+                            <input type="text" class="form-control" id="autor" name="autor">
+                        </div>
+                        <div class="form-group">
+                            <label for="descripcio">Introdueix descripcio:</label>
+                            <input type="text" class="form-control" id="descripcio" name="descripcio">
+                        </div>
+                        <div class="form-group">
+                            <label for="keywords">Introdueix keywords:</label>
+                            <input type="text" class="form-control" id="keywords" name="keywords">
+                        </div>
+                        <div class="form-group">
+                            <label for="creadate">Introdueix data de creació:</label>
+                            <input type="text" class="form-control" id="creadate" name="creadate">
+                        </div>
+                        <div class="form-group">
+                            <label for="filename">Introdueix filename:</label>
+                            <input type="text" class="form-control" id="filename" name="filename">
+                        </div>
+                        <button type="submit" class="btn btn-primary">Registra</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>
