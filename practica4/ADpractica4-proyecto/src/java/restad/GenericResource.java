@@ -102,6 +102,7 @@ public class GenericResource {
 
     /**
     * GET method to list images
+    * http://localhost:8080/practica4/webresources/gestorImagenes/list
     * @return
     */
     @Path("list")
