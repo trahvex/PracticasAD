@@ -27,19 +27,22 @@
             %-->
             <h1>BIENVENIDO</h1> <!--{sessionScope.usuario}-->
             <br>
-            <a href="registrarImagen.jsp">
-                <h2>Registrar Imagen</h2>
-            </a>
-            <a href="list.jsp">
-                <h2>Mostrar imágenes</h2>
-            </a>
-            <a href="buscarImagen.jsp">
-                <h2>Buscar imagen</h2>
-            </a>
-
-            <a href="logout.jsp">
-                <small> Logout </small>
-            </a>
+            <a href="registrarImagen.jsp">Registrar imagen</a><br>
+            
+            <a href="/practica4/webresources/gestorImagenes/list">Listar imágenes</a><br>
+            
+            <a href="/practica4/webresources/gestorImagenes/searchID/1">Buscar imagen por ID</a><br>
+            
+            <a href="/practica4/webresources/gestorImagenes/searchTitle/i">Buscar imagen por título</a><br>
+            
+            <a href="/practica4/webresources/gestorImagenes/searchCreationDate/2018-11-10">Buscar imagen por fecha de creación</a><br>
+            
+            <a href="/practica4/webresources/gestorImagenes/searchAuthor/a">Buscar imagen por autor</a><br>
+            
+            <a href="/practica4/webresources/gestorImagenes/searchKeywords/i">Buscar imagen por palabras clave</a><br>
+            
+            <a href="/practica4/webresources/gestorImagenes/searchTitleKeywords/i,i">Buscar imagen por título y palabras clave</a>
+            
         </div>
     </body>
 </html>

@@ -28,6 +28,13 @@ import java.util.List;
 import java.util.ArrayList;
 import javafx.util.Pair;
 import java.io.File;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import javax.servlet.http.Part;
+import javax.ws.rs.FormParam;
 
 
 /**
@@ -57,7 +64,7 @@ public class GenericResource {
         "    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1, shrink-to-fit=no\">\n\n" +
         "    <link rel=\"stylesheet\" href=\"https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css\" integrity=\"sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm\" crossorigin=\"anonymous\">\n" +
         "    <title>"+ title +"</title>\n" +
-        "    </head>");
+        "    </head><body>");
     }
 
  
@@ -76,9 +83,77 @@ public class GenericResource {
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     @Produces(MediaType.TEXT_HTML)
     public String registerImage (@FormParam("title") String title, @FormParam("description") String description, @FormParam("keywords") String keywords,
-            @FormParam("author") String author, @FormParam("creation") String crea_date){
+            @FormParam("author") String author, @FormParam("creation") String crea_date, @FormParam("fileName") String fileName){
         
-        return "hola";
+            html = cabeceras("Exito!");
+        
+        
+            Connection connection = null;
+            try {
+                        
+                PreparedStatement statement;
+                String query;
+                Class.forName("org.sqlite.JDBC");           
+
+                connection = DriverManager.getConnection("jdbc:sqlite:C:\\Users\\fenix\\Desktop\\AD\\PracticasAD\\practica4\\ADpractica4-proyecto\\practica4.db");       
+                query = "create table if not exists image (id integer primary key, title varchar (256) NOT NULL, description varchar (1024) NOT NULL, keywords "
+                + "varchar (256) NOT NULL, author varchar (255) NOT NULL, creation_date varchar (10) NOT NULL, storage_date varchar (10) NOT NULL, fileName varchar (512) NOT NULL UNIQUE, "
+                + "foreign key (author) references usuarios(id_usuario))";
+                statement = connection.prepareStatement(query);
+                statement.executeUpdate();              
+                
+                String storage_date;
+                //cogemos decha actual
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+                LocalDateTime dateTime = LocalDateTime.now();
+                storage_date = dateTime.format(formatter);
+                
+                
+                /*String fileName = fileDetail.getFileName();
+                String uploadedFileLocation = "C:\\Users\\fenix\\Desktop\\AD\\PracticasAD\\practica4\\ADpractica4-proyecto\\Imagenes" + fileName +"_"+ author;
+                writeToFile(uploadedInputStream, uploadedFileLocation);*/
+                
+                query = "select max(id) from image";
+                statement = connection.prepareStatement(query);
+                ResultSet rs = statement.executeQuery();
+                int newId = 1;
+                if(rs.next())
+                    newId= rs.getInt(1) + 1;                 
+                        
+                query = "insert into image (id, title, description, keywords, author, creation_date, storage_date, filename)"
+                        + "values(?, ?, ?, ?, ?, ?, ?, ?)";
+                statement = connection.prepareStatement(query);
+                statement.setInt(1, newId); //id imagen
+                statement.setString(2, title); //titulo imagen
+                statement.setString(3, description); //descripcion imagen
+                statement.setString(4, keywords); //palabras clave
+                statement.setString(5, author); //autor
+                statement.setString(6, crea_date); //fecha creacion  
+                statement.setString(7, storage_date); //fecha alta (actual)
+                statement.setString(8, fileName);  //nombre fichero           
+                statement.executeUpdate();
+                
+                html = html + "<h2> Se ha registrado la imagen correctamente </h2>  ";
+                
+            } catch (SQLException | ClassNotFoundException e) {
+                System.err.println(e.getMessage());
+                out.println(e.getMessage());
+            }finally {
+                try {
+                    if (connection != null) {
+                        connection.close();
+                    }
+                } catch (SQLException e) {
+                    // connection close failed.
+                    System.err.println(e.getMessage());
+                }
+            }
+            
+        html += "<a href='http://localhost:8080/practica4/'> <small> Volver al menú </small> </a>";    
+        
+        html += "</body> </html>";
+                
+        return html;
     }
     
     /**
@@ -94,10 +169,52 @@ public class GenericResource {
     @POST
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     @Produces(MediaType.TEXT_HTML)
-    public String modifyImage (@FormParam("id") String id, @FormParam("title") String title, @FormParam("description") String description,
-            @FormParam("keywords") String keywords, @FormParam("author") String author, @FormParam("creation") String crea_date){
+    public String modifyImage (@FormParam("id") int id, @FormParam("title") String title, @FormParam("description") String description,
+            @FormParam("keywords") String keywords, @FormParam("author") String author, @FormParam("creation") String crea_date, @FormParam("fileName") String fileName){
         
-        return "hola";
+        html = cabeceras("Modificado");
+        
+        Connection connection = null;
+            try {                        
+                PreparedStatement statement;
+                String query;
+                Class.forName("org.sqlite.JDBC");
+                connection = DriverManager.getConnection("jdbc:sqlite:C:\\Users\\fenix\\Desktop\\AD\\PracticasAD\\practica4\\ADpractica4-proyecto\\practica4.db");       
+                                       
+                query = "update image set title=?, description=? , keywords=?, filename=? ,author=? where id=?";
+                statement = connection.prepareStatement(query);
+                statement.setString(1, title); //titulo imagen
+                statement.setString(2, description); //descripcion imagen
+                statement.setString(3, keywords); //palabras clave
+                statement.setString(4, fileName); 
+                statement.setString(5, author); 
+                statement.setInt(6, id);
+                statement.executeUpdate();
+                
+                //todo chido pos te presenta mensaje de exito
+                html += "<h2> Modificación ejecutada con exito </h2>"
+                        + "<b>Información actual:</b><br>"
+                        + "<br>&nbsp&nbsp&nbsp&nbspTítulo: "+title+"<br>"
+                        + "&nbsp&nbsp&nbsp&nbspDescripción: "+description+"<br>"
+                        + "&nbsp&nbsp&nbsp&nbspPalabras clave: "+keywords+"<br>"
+                        + "&nbsp&nbsp&nbsp&nbspNombre del fichero: "+fileName+"<br><br>"
+                        + "<a href=\"menu.jsp\">"
+                        + "<small> Volver al menú </small></a>";
+                
+            } catch (SQLException | ClassNotFoundException e) {
+                System.err.println(e.getMessage());
+            }finally {
+                try {
+                    if (connection != null) {
+                        connection.close();
+                    }
+                } catch (SQLException e) {
+                    // connection close failed.
+                    System.err.println(e.getMessage());
+                }
+           }
+        
+        return html;
     }
 
     /**
@@ -111,12 +228,11 @@ public class GenericResource {
     public String listImages (){
         html = cabeceras("Lista");
         
-        html = html + "<body> <h1> Lista imágenes </h1> </body> </html>";
+        html = html + "<h1> Lista imágenes </h1>  ";
         
         //TODO cambiar paths
         
-        final File folder = new File("C:\\Users\\Carles\\Desktop\\ADpractica3\\ADpractica3-projecte\\web\\Imagenes");
-                //preparamos la conexion para saber que fotos pertenecen al usuario logueado
+        final File folder = new File("C:\\Users\\fenix\\Desktop\\AD\\PracticasAD\\practica4\\ADpractica4-proyecto\\Imagenes");
                 PreparedStatement statement;
                 String query;
         try {           
@@ -128,12 +244,17 @@ public class GenericResource {
                 List<String> authorPics = new ArrayList<String>();
                 List<Pair<String,String>> nombresFotos = new ArrayList<Pair<String,String>>();
                 try{
-                    connection = DriverManager.getConnection("jdbc:sqlite:C:\\Users\\Carles\\Desktop\\ADpractica3\\ADpractica3-projecte\\practica3.db");
+                    connection = DriverManager.getConnection("jdbc:sqlite:C:\\Users\\Carles\\Desktop\\ADpractica4\\ADpractica4-projecte\\practica3.db");
                        
                     //guardaremos tambien nombre y archivo de las fotos
                     query = "select * from image";
                     statement = connection.prepareStatement(query);
                     ResultSet rs = statement.executeQuery();
+                    
+                    while (rs.next()){
+                        html += "id: " + rs.getString(1) + "title: " + rs.getString(2) + "description: " + rs.getString(3)
+                                + "keywords: " + rs.getString(4) + "author: " + rs.getString(5) + "creation: " + rs.getString(6) + "<br>";
+                    }
                     
                 }catch (SQLException e) {
                     System.err.println(e.getMessage());
@@ -148,9 +269,9 @@ public class GenericResource {
                     }
                 }
                 
-                
-        //TODO imprimir usando rs.next
+        html += "<a href='http://localhost:8080/practica4/'> <small> Volver al menú </small> </a>";    
         
+        html += "</body> </html>";
                 
         return html;
         
@@ -225,5 +346,5 @@ public class GenericResource {
         
         return "hola";
     }
-    
+
 }

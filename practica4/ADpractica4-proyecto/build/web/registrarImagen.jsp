@@ -21,24 +21,26 @@
     </head>
     <body>
         <div class="container-fluid">
-            <%
+            <!--%
             if(session.getAttribute("usuario") == null)
                 response.sendRedirect("login.jsp");
-            %>
+            %-->
             <h2>Registra tu imagen:</h2>
-            <form action="registrarImagen" method="POST" enctype="multipart/form-data">
+            <form action="http://localhost:8080/practica4/webresources/gestorImagenes/register" enctype="multipart/form-data">
                 Título: 
-                <input type="text" name="title" /> <br><br>
+                <input type="text" name="title" required/> <br><br>
                 Descripción:
-                <input type="text" name="description" /> <br><br>
+                <input type="text" name="description" required/> <br><br>
                 Palabras clave (separadas por comas y sin espacios): 
-                <input type="text" name="keyword" /> <br><br>
+                <input type="text" name="keywords" required/> <br><br>
+                Autor: 
+                <input type="text" name="author" required/> <br><br>
                 Fecha de creación:  
-                <input type="date" name="creationDate" /> <br><br>
-                Imagen:
-                <input type="file" name="picture" /> <br><br>
+                <input type="date" name="creation" required/> <br><br>
+                Nombre del fichero:
+                <input type="text" name="fileName" required/> <br><br>
                 
-                <input type="submit" value="Enviar" /> <br><br>
+                <input type="submit" value="Enviar" required/> <br><br>
             </form>
             <a href="menu.jsp">
                 <small> Volver al menú </small>

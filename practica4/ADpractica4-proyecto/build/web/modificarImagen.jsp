@@ -30,39 +30,38 @@
     </head>
     <body>
         <div class="container-fluid">
-            <%
+            <!--%
             if(session.getAttribute("usuario") == null)
                 response.sendRedirect("login.jsp");
-            %>
+            %-->
             <%
-                HttpSession sesion = request.getSession();
                 Connection connection = null;
-                String titulo, descripcion, keywords;
-                titulo = descripcion = keywords = null;
+                String titulo, descripcion, keywords, author, fileName;
+                titulo = descripcion = keywords = author= fileName = null;
                 try {
                     PreparedStatement statement;
                     String query;
-                    // load the sqlite-JDBC driver using the current class loader
                     Class.forName("org.sqlite.JDBC");           
-                    connection = DriverManager.getConnection("jdbc:sqlite:C:\\Users\\fenix\\Desktop\\AD\\ADpractica2\\ADpractica2\\practica2.db");       
+                    connection = DriverManager.getConnection("jdbc:sqlite:C:\\Users\\fenix\\Desktop\\AD\\PracticasAD\\practica4\\ADpractica4-proyecto\\practica4.db");       
 
                     //coger datos de la foto
-                    query = "select * from image where filename=?";
+                    query = "select * from image where fileName=?";
                     statement = connection.prepareStatement(query);
                     statement.setString(1, request.getParameter("imagen"));    
                     ResultSet rs = statement.executeQuery();          
 
 
-                    if (rs.next() == true){
+                    if (rs.next() == true){                      
                         titulo = rs.getString(2);
                         descripcion = rs.getString(3);
-                        keywords = rs.getString(4);                            
+                        keywords = rs.getString(4);
+                        author = rs.getString(5);
+                        fileName = rs.getString(8);
                     }
 
                 } catch (SQLException e) {
                     System.err.println(e.getMessage());
                     out.println(e.getMessage());
-                    response.sendRedirect("error.jsp");
                 }finally {
                     try {
                         if (connection != null) {
@@ -80,12 +79,11 @@
                         + "<form action=\"modificarImagen\" method=\"POST\" enctype=\"multipart/form-data\" >"
                         + "Título:<input type=\"text\" name=\"title\" value = "+titulo+"> <br><br>"
                         + "Descripción:<input type=\"text\" name=\"description\"value = "+descripcion+"> <br><br>"
-                        + "Palabras clave (separadas por comas y sin espacios):<input type=\"text\" name=\"keyword\"value = "+keywords+"> <br><br>"
-                        + "<input type=\"checkbox\" name=\"upload\" value=\"Subida\"> Marca esta casilla si quieres cambiar el fichero asociado"
-                                + "a una imagen mediante el campo siguiente<br>"
-                        + "Imagen sustituta:<input type=\"file\" name=\"picture\" /> <br><br>"
+                        + "Palabras clave (separadas por comas y sin espacios):<input type=\"text\" name=\"keywords\"value = "+keywords+"> <br><br>"
+                        + "Fichero de la imagen:<input type=\"text\" name=\"fileName\" value ="+fileName+" /> <br><br>"
+                        + "Autor:<input type=\"text\" name=\"author\" value ="+author+" /> <br><br>"
+                        + "<input type=\"hidden\" name=\"id\" value=\""+ request.getParameter("id") +"\">"
                         + "<input type=\"submit\" value=\"Enviar\" /> <br><br>"
-                        + "<input type=\"hidden\" name=\"imagen\" value=\""+ request.getParameter("imagen") +"\">"
                         + "</form>");
             %>
             <a href="menu.jsp">
