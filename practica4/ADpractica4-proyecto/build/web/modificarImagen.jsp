@@ -4,6 +4,7 @@
     Author     : ruben.sanz.garcia
 --%>
 
+<%@page import="javax.ws.rs.client.Entity.form(Form)"%>
 <%@page import="java.time.format.DateTimeFormatter"%>
 <%@page import="java.text.SimpleDateFormat"%>
 <%@page import="java.sql.Date"%>
@@ -45,9 +46,9 @@
                     connection = DriverManager.getConnection("jdbc:sqlite:C:\\Users\\fenix\\Desktop\\AD\\PracticasAD\\practica4\\ADpractica4-proyecto\\practica4.db");       
 
                     //coger datos de la foto
-                    query = "select * from image where fileName=?";
+                    query = "select * from image where id=?";
                     statement = connection.prepareStatement(query);
-                    statement.setString(1, request.getParameter("imagen"));    
+                    statement.setString(1, request.getParameter("id"));    
                     ResultSet rs = statement.executeQuery();          
 
 
@@ -76,7 +77,7 @@
 
                 //escribe el formulario con los datos que tiene la foto actualmente
                 out.write("<h2>Modifica:</h2>"
-                        + "<form action=\"modificarImagen\" method=\"POST\" enctype=\"multipart/form-data\" >"
+                        + "<form action=\"http:\\\\localhost:8080\\practica4\\webresources\\gestorImagenes\\modify\" enctype=\"multipart/form-data\">"
                         + "Título:<input type=\"text\" name=\"title\" value = "+titulo+"> <br><br>"
                         + "Descripción:<input type=\"text\" name=\"description\"value = "+descripcion+"> <br><br>"
                         + "Palabras clave (separadas por comas y sin espacios):<input type=\"text\" name=\"keywords\"value = "+keywords+"> <br><br>"

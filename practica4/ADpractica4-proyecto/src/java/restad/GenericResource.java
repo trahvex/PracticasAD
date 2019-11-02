@@ -253,7 +253,8 @@ public class GenericResource {
                     
                     while (rs.next()){
                         html += "id: " + rs.getString(1) + "title: " + rs.getString(2) + "description: " + rs.getString(3)
-                                + "keywords: " + rs.getString(4) + "author: " + rs.getString(5) + "creation: " + rs.getString(6) + "<br>";
+                                + "keywords: " + rs.getString(4) + "author: " + rs.getString(5) + "creation: " + rs.getString(6) + "<br>"
+                                + "<a href=\\\"modificarImagen.jsp?id="+ rs.getString(1) +"\\\"> Modificar Imagen </a>\" <br>";
                     }
                     
                 }catch (SQLException e) {

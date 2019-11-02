@@ -35,13 +35,15 @@
             
             <a href="/practica4/webresources/gestorImagenes/searchTitle/i">Buscar imagen por título</a><br>
             
-            <a href="/practica4/webresources/gestorImagenes/searchCreationDate/2018-11-10">Buscar imagen por fecha de creación</a><br>
+            <a href="/practica4/webresources/gestorImagenes/searchCreationDate/2019">Buscar imagen por fecha de creación</a><br>
             
-            <a href="/practica4/webresources/gestorImagenes/searchAuthor/a">Buscar imagen por autor</a><br>
+            <a href="/practica4/webresources/gestorImagenes/searchAuthor/r">Buscar imagen por autor</a><br>
             
             <a href="/practica4/webresources/gestorImagenes/searchKeywords/i">Buscar imagen por palabras clave</a><br>
             
             <a href="/practica4/webresources/gestorImagenes/searchTitleKeywords/i,i">Buscar imagen por título y palabras clave</a>
+            
+            <!-- para que funcione las busquedas sustituir parametros-->
             
         </div>
     </body>

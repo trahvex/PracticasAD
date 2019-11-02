@@ -94,8 +94,7 @@
                     out.write("&nbsp&nbsp -&nbsp <a href=\"Imagenes/" + p.getValue() + "\">" + p.getKey() + "</a>");
 
                     if(authorPics.contains(p.getValue()))
-                        out.write ("&nbsp&nbsp&nbsp&nbsp<a href=\"modificarImagen.jsp?imagen="+ p.getValue() +"\"> Modificar Imagen"
-                                + "</a>");
+                        out.write ("&nbsp&nbsp&nbsp&nbsp <a href=\"modificarImagen.jsp?imagen="+ p.getValue() +"\"> Modificar Imagen </a>");
 
                     out.write("<br>");
                 }
