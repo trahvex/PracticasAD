@@ -232,9 +232,9 @@ public class GenericResource {
         
         //TODO cambiar paths
         
-        final File folder = new File("C:\\Users\\fenix\\Desktop\\AD\\PracticasAD\\practica4\\ADpractica4-proyecto\\Imagenes");
-                PreparedStatement statement;
-                String query;
+        //final File folder = new File("C:\\Users\\fenix\\Desktop\\AD\\PracticasAD\\practica4\\ADpractica4-proyecto\\Imagenes");
+        PreparedStatement statement;
+        String query;
         try {           
             Class.forName("org.sqlite.JDBC");
         } catch (ClassNotFoundException ex) {
@@ -244,7 +244,7 @@ public class GenericResource {
                 List<String> authorPics = new ArrayList<String>();
                 List<Pair<String,String>> nombresFotos = new ArrayList<Pair<String,String>>();
                 try{
-                    connection = DriverManager.getConnection("jdbc:sqlite:C:\\Users\\Carles\\Desktop\\ADpractica4\\ADpractica4-projecte\\practica3.db");
+                    connection = DriverManager.getConnection("jdbc:sqlite:C:\\Users\\fenix\\Desktop\\AD\\PracticasAD\\practica4\\ADpractica4-proyecto\\practica4.db");
                        
                     //guardaremos tambien nombre y archivo de las fotos
                     query = "select * from image";
@@ -278,6 +278,8 @@ public class GenericResource {
     }
     
     
+      
+    
     /**
     * GET method to search images by id
     * @param id
@@ -287,8 +289,45 @@ public class GenericResource {
     @GET
     @Produces(MediaType.TEXT_HTML)
     public String searchByID (@PathParam("id") int id){
+        Connection connection = null;
+        html = cabeceras("Búsqueda ID");
+        html += "<body><h2>Búsqueda por ID</h2>";
+        try {
+            Class.forName("org.sqlite.JDBC");
+            connection = DriverManager.getConnection("jdbc:sqlite:C:\\Users\\fenix\\Desktop\\AD\\PracticasAD\\practica4\\ADpractica4-proyecto\\practica4.db");
+            PreparedStatement statement = connection.prepareStatement("select * from imatges where id_imatge = ?");
+            statement.setInt(1,id);
+            ResultSet rs = statement.executeQuery();
+            while(rs.next()){
+                html = html + "<b> ID: <\\b>" + String.valueOf(rs.getInt("id")) + "<br>";
+                html = html + "<b> Título: <\\b>" + rs.getString("title") + "<br>";
+                html = html + "<b> Descripción: <\\b>" + rs.getString("description") + "<br>";
+                html = html + "<b> Keywords: <\\b>" + rs.getString("keywords") + "<br>";
+                html = html + "<b> Autor: <\\b>" + rs.getString("author") + "<br>";
+                html = html + "<b> Fecha creación: <\\b>" + rs.getString("creation_date") + "<br>";
+                html += "<br>";
+            }
+            html += "<a href='http://localhost:8080/practica4/'> <small> Volver al menú </small> </a>";    
         
-        return "hola";
+        }
+        catch(SQLException | ClassNotFoundException e ){
+          System.err.println("SQL EXCEPTION: " + e.getMessage());
+          return null;
+        }
+        finally{
+          try{
+            if(connection != null)
+              connection.close();
+            System.out.println("closed connection");
+          }
+          catch(SQLException e){
+            // connection close failed.
+            System.err.println(e.getMessage());
+          }
+        } 
+        
+        html += "</body> </html>";
+        return html;
     }
     
     
@@ -301,8 +340,45 @@ public class GenericResource {
     @GET
     @Produces(MediaType.TEXT_HTML)
     public String searchByTitle (@PathParam("title") String title){
+        Connection connection = null;
+        html = cabeceras("Búsqueda título");
+        html += "<body><h2>Búsqueda por título</h2>";
+        try {
+            Class.forName("org.sqlite.JDBC");
+            connection = DriverManager.getConnection("jdbc:sqlite:C:\\Users\\fenix\\Desktop\\AD\\PracticasAD\\practica4\\ADpractica4-proyecto\\practica4.db");
+            PreparedStatement statement = connection.prepareStatement("select * from imatges where where titol_imatge like ?");
+            statement.setString(1,title);
+            ResultSet rs = statement.executeQuery();
+            while(rs.next()){
+                html = html + "<b> ID: <\\b>" + String.valueOf(rs.getInt("id")) + "<br>";
+                html = html + "<b> Título: <\\b>" + rs.getString("title") + "<br>";
+                html = html + "<b> Descripción: <\\b>" + rs.getString("description") + "<br>";
+                html = html + "<b> Keywords: <\\b>" + rs.getString("keywords") + "<br>";
+                html = html + "<b> Autor: <\\b>" + rs.getString("author") + "<br>";
+                html = html + "<b> Fecha creación: <\\b>" + rs.getString("creation_date") + "<br>";
+                html += "<br>";
+            }
+            html += "<a href='http://localhost:8080/practica4/'> <small> Volver al menú </small> </a>";    
         
-        return "hola";
+        }
+        catch(SQLException | ClassNotFoundException e ){
+          System.err.println("SQL EXCEPTION: " + e.getMessage());
+          return null;
+        }
+        finally{
+          try{
+            if(connection != null)
+              connection.close();
+            System.out.println("closed connection");
+          }
+          catch(SQLException e){
+            // connection close failed.
+            System.err.println(e.getMessage());
+          }
+        } 
+        
+        html += "</body> </html>";
+        return html;
     }
     
     
@@ -315,8 +391,45 @@ public class GenericResource {
     @GET
     @Produces(MediaType.TEXT_HTML)
     public String searchByCreationDate (@PathParam("date") String date){
+        Connection connection = null;
+        html = cabeceras("Búsqueda fecha");
+        html += "<body><h2>Búsqueda por fecha de creación</h2>";
+        try {
+            Class.forName("org.sqlite.JDBC");
+            connection = DriverManager.getConnection("jdbc:sqlite:C:\\Users\\fenix\\Desktop\\AD\\PracticasAD\\practica4\\ADpractica4-proyecto\\practica4.db");
+            PreparedStatement statement = connection.prepareStatement("select * from imatges where where creation_date like ?");
+            statement.setString(1,date);
+            ResultSet rs = statement.executeQuery();
+            while(rs.next()){
+                html = html + "<b> ID: <\\b>" + String.valueOf(rs.getInt("id")) + "<br>";
+                html = html + "<b> Título: <\\b>" + rs.getString("title") + "<br>";
+                html = html + "<b> Descripción: <\\b>" + rs.getString("description") + "<br>";
+                html = html + "<b> Keywords: <\\b>" + rs.getString("keywords") + "<br>";
+                html = html + "<b> Autor: <\\b>" + rs.getString("author") + "<br>";
+                html = html + "<b> Fecha creación: <\\b>" + rs.getString("creation_date") + "<br>";
+                html += "<br>";
+            }
+            html += "<a href='http://localhost:8080/practica4/'> <small> Volver al menú </small> </a>";    
         
-        return "hola";
+        }
+        catch(SQLException | ClassNotFoundException e ){
+          System.err.println("SQL EXCEPTION: " + e.getMessage());
+          return null;
+        }
+        finally{
+          try{
+            if(connection != null)
+              connection.close();
+            System.out.println("closed connection");
+          }
+          catch(SQLException e){
+            // connection close failed.
+            System.err.println(e.getMessage());
+          }
+        } 
+        
+        html += "</body> </html>";
+        return html;
     }
     
     
@@ -329,8 +442,45 @@ public class GenericResource {
     @GET
     @Produces(MediaType.TEXT_HTML)
     public String searchByAuthor (@PathParam("author") String author){
+        Connection connection = null;
+        html = cabeceras("Búsqueda autor");
+        html += "<body><h2>Búsqueda por autor</h2>";
+        try {
+            Class.forName("org.sqlite.JDBC");
+            connection = DriverManager.getConnection("jdbc:sqlite:C:\\Users\\fenix\\Desktop\\AD\\PracticasAD\\practica4\\ADpractica4-proyecto\\practica4.db");
+            PreparedStatement statement = connection.prepareStatement("select * from imatges where where author like ?");
+            statement.setString(1,author);
+            ResultSet rs = statement.executeQuery();
+            while(rs.next()){
+                html = html + "<b> ID: <\\b>" + String.valueOf(rs.getInt("id")) + "<br>";
+                html = html + "<b> Título: <\\b>" + rs.getString("title") + "<br>";
+                html = html + "<b> Descripción: <\\b>" + rs.getString("description") + "<br>";
+                html = html + "<b> Keywords: <\\b>" + rs.getString("keywords") + "<br>";
+                html = html + "<b> Autor: <\\b>" + rs.getString("author") + "<br>";
+                html = html + "<b> Fecha creación: <\\b>" + rs.getString("creation_date") + "<br>";
+                html += "<br>";
+            }
+            html += "<a href='http://localhost:8080/practica4/'> <small> Volver al menú </small> </a>";    
         
-        return "hola";
+        }
+        catch(SQLException | ClassNotFoundException e ){
+          System.err.println("SQL EXCEPTION: " + e.getMessage());
+          return null;
+        }
+        finally{
+          try{
+            if(connection != null)
+              connection.close();
+            System.out.println("closed connection");
+          }
+          catch(SQLException e){
+            // connection close failed.
+            System.err.println(e.getMessage());
+          }
+        } 
+        
+        html += "</body> </html>";
+        return html;
     }
     
     
@@ -343,8 +493,100 @@ public class GenericResource {
     @GET
     @Produces(MediaType.TEXT_HTML)
     public String searchByKeywords (@PathParam("keywords") String keywords){
+        Connection connection = null;
+        html = cabeceras("Búsqueda palabras clave");
+        html += "<body><h2>Búsqueda por palabras clave</h2>";
+        try {
+            Class.forName("org.sqlite.JDBC");
+            connection = DriverManager.getConnection("jdbc:sqlite:C:\\Users\\fenix\\Desktop\\AD\\PracticasAD\\practica4\\ADpractica4-proyecto\\practica4.db");
+            PreparedStatement statement = connection.prepareStatement("select * from imatges where where keywords like ?");
+            statement.setString(1,keywords);
+            ResultSet rs = statement.executeQuery();
+            while(rs.next()){
+                html = html + "<b> ID: <\\b>" + String.valueOf(rs.getInt("id")) + "<br>";
+                html = html + "<b> Título: <\\b>" + rs.getString("title") + "<br>";
+                html = html + "<b> Descripción: <\\b>" + rs.getString("description") + "<br>";
+                html = html + "<b> Keywords: <\\b>" + rs.getString("keywords") + "<br>";
+                html = html + "<b> Autor: <\\b>" + rs.getString("author") + "<br>";
+                html = html + "<b> Fecha creación: <\\b>" + rs.getString("creation_date") + "<br>";
+                html += "<br>";
+            }
+            html += "<a href='http://localhost:8080/practica4/'> <small> Volver al menú </small> </a>";    
         
-        return "hola";
+        }
+        catch(SQLException | ClassNotFoundException e ){
+          System.err.println("SQL EXCEPTION: " + e.getMessage());
+          return null;
+        }
+        finally{
+          try{
+            if(connection != null)
+              connection.close();
+            System.out.println("closed connection");
+          }
+          catch(SQLException e){
+            // connection close failed.
+            System.err.println(e.getMessage());
+          }
+        } 
+        
+        html += "</body> </html>";
+        return html;
     }
+    
+    /**
+    * GET method to search images by title and keywords
+    * @param keywords
+    * @return
+    */
+    @Path("searchKeywords/{title},{keywords}")
+    @GET
+    @Produces(MediaType.TEXT_HTML)
+    public String searchByTitleKeywords (@PathParam("title") String title, @PathParam("keywords") String keywords){
+        Connection connection = null;
+        html = cabeceras("Búsqueda combinada");
+        html += "<body><h2>Búsqueda combinada título y palabras clave</h2>";
+        try {
+            Class.forName("org.sqlite.JDBC");
+            connection = DriverManager.getConnection("jdbc:sqlite:C:\\Users\\fenix\\Desktop\\AD\\PracticasAD\\practica4\\ADpractica4-proyecto\\practica4.db");
+            PreparedStatement statement = connection.prepareStatement("select * from imatges where titol_imatge like ? and paraula_clau like ?");
+            statement.setString(1,"%" + title + "%");
+            statement.setString(2,"%" + keywords + "%");
+            ResultSet rs = statement.executeQuery();
+            while(rs.next()){
+                html = html + "<b> ID: <\\b>" + String.valueOf(rs.getInt("id")) + "<br>";
+                html = html + "<b> Título: <\\b>" + rs.getString("title") + "<br>";
+                html = html + "<b> Descripción: <\\b>" + rs.getString("description") + "<br>";
+                html = html + "<b> Keywords: <\\b>" + rs.getString("keywords") + "<br>";
+                html = html + "<b> Autor: <\\b>" + rs.getString("author") + "<br>";
+                html = html + "<b> Fecha creación: <\\b>" + rs.getString("creation_date") + "<br>";
+                html += "<br>";
+            }
+            html += "<a href='http://localhost:8080/practica4/'> <small> Volver al menú </small> </a>";    
+        
+        }
+        catch(SQLException | ClassNotFoundException e ){
+          System.err.println("SQL EXCEPTION: " + e.getMessage());
+          return null;
+        }
+        finally{
+          try{
+            if(connection != null)
+              connection.close();
+            System.out.println("closed connection");
+          }
+          catch(SQLException e){
+            // connection close failed.
+            System.err.println(e.getMessage());
+          }
+        } 
+        
+        html += "</body> </html>";
+        return html;
+    }
+    
+    
+    
+    
 
 }
