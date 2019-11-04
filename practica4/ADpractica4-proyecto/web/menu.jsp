@@ -27,9 +27,9 @@
             %-->
             <h1>BIENVENIDO</h1> <!--{sessionScope.usuario}-->
             <br>
-            <a href="registrarImagen.jsp">Registrar imagen</a><br><br>
+            <h3><a href="registrarImagen.jsp">Registrar imagen</a><br></h3>
             
-            <a href="/practica4/webresources/gestorImagenes/list">Listar imágenes</a><br><br>
+            <h3><a href="/practica4/webresources/gestorImagenes/list">Listar imágenes</a><br><br></h3>
             
            
             <form class= "card" id="buscarImatge" method="GET" onsubmit="addPath()">
@@ -47,7 +47,7 @@
                     </div>
                     <div class="form-group">
                         <label for="valorCerca">Introdueix cerca:</label>
-                        <input type="text" class="form-control" id="valorCerca" name="valorCerca">
+                        <input type="text" class="form-control" id="valorCerca" name="valorCerca" required="">
                     </div>
                     <button type="submit" class="btn btn-primary">Cerca</button> <br><br>
                 </div>
@@ -58,9 +58,9 @@
                     <div class="card-title"><h4>Buscar per titol i autor</h4></div>
                     <div class="form-group">
                         <label for="titol">Introdueix titol:</label>
-                        <input type="text" class="form-control" id="titol" name="titol">
+                        <input type="text" class="form-control" id="titol" name="titol" required>
                         <label for="keywords">Introdueix autor:</label>
-                        <input type="text" class="form-control" id="autor" name="autor">
+                        <input type="text" class="form-control" id="autor" name="autor" required>
                     </div>
                     <button type="submit" class="btn btn-primary">Cerca</button> <br><br>
                 </div>
