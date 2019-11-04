@@ -4,7 +4,7 @@
     Author     : ruben.sanz.garcia
 --%>
 
-<%@page import="javax.ws.rs.client.Entity.form(Form)"%>
+<%//@page import="javax.ws.rs.client.Entity.form(Form)"%>
 <%@page import="java.time.format.DateTimeFormatter"%>
 <%@page import="java.text.SimpleDateFormat"%>
 <%@page import="java.sql.Date"%>
@@ -77,7 +77,7 @@
 
                 //escribe el formulario con los datos que tiene la foto actualmente
                 out.write("<h2>Modifica:</h2>"
-                        + "<form action=\"http:\\\\localhost:8080\\practica4\\webresources\\gestorImagenes\\modify\" enctype=\"multipart/form-data\">"
+                        + "<form action=\"http:\\\\localhost:8080\\practica4\\webresources\\gestorImagenes\\modify\" method=\"POST\">"
                         + "Título:<input type=\"text\" name=\"title\" value = "+titulo+"> <br><br>"
                         + "Descripción:<input type=\"text\" name=\"description\"value = "+descripcion+"> <br><br>"
                         + "Palabras clave (separadas por comas y sin espacios):<input type=\"text\" name=\"keywords\"value = "+keywords+"> <br><br>"

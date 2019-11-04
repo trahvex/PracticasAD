@@ -26,7 +26,7 @@
                 response.sendRedirect("login.jsp");
             %-->
             <h2>Registra tu imagen:</h2>
-            <form action="http://localhost:8080/practica4/webresources/gestorImagenes/register" enctype="multipart/form-data">
+            <form action="http://localhost:8080/practica4/webresources/gestorImagenes/register" method="POST">
                 Título: 
                 <input type="text" name="title" required/> <br><br>
                 Descripción:

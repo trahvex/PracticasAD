@@ -27,24 +27,79 @@
             %-->
             <h1>BIENVENIDO</h1> <!--{sessionScope.usuario}-->
             <br>
-            <a href="registrarImagen.jsp">Registrar imagen</a><br>
+            <a href="registrarImagen.jsp">Registrar imagen</a><br><br>
             
-            <a href="/practica4/webresources/gestorImagenes/list">Listar imágenes</a><br>
+            <a href="/practica4/webresources/gestorImagenes/list">Listar imágenes</a><br><br>
             
-            <a href="/practica4/webresources/gestorImagenes/searchID/1">Buscar imagen por ID</a><br>
+           
+            <form class= "card" id="buscarImatge" method="GET" onsubmit="addPath()">
+                <div class="card-body">
+                    <div class="card-title"><h4>Buscar una imatge</h4></div>
+                    <div class="form-group">
+                        <label for="camp">Selecciona camp a buscar</label>
+                        <select class="form-control" id="camp" name="camp">
+                          <option>ID</option>
+                          <option>Autor</option>
+                          <option>Titol</option>
+                          <option>Data Creacio</option>
+                          <option>Keywords</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="valorCerca">Introdueix cerca:</label>
+                        <input type="text" class="form-control" id="valorCerca" name="valorCerca">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Cerca</button> <br><br>
+                </div>
+            </form><br><br>
             
-            <a href="/practica4/webresources/gestorImagenes/searchTitle/i">Buscar imagen por título</a><br>
-            
-            <a href="/practica4/webresources/gestorImagenes/searchCreationDate/2019">Buscar imagen por fecha de creación</a><br>
-            
-            <a href="/practica4/webresources/gestorImagenes/searchAuthor/r">Buscar imagen por autor</a><br>
-            
-            <a href="/practica4/webresources/gestorImagenes/searchKeywords/i">Buscar imagen por palabras clave</a><br>
-            
-            <a href="/practica4/webresources/gestorImagenes/searchTitleKeywords/i,i">Buscar imagen por título y palabras clave</a>
-            
-            <!-- para que funcione las busquedas sustituir parametros-->
-            
+            <form class= "card" id="busquedaCombinada" method="GET" onsubmit="combinedSearch()">
+                <div class="card-body">
+                    <div class="card-title"><h4>Buscar per titol i autor</h4></div>
+                    <div class="form-group">
+                        <label for="titol">Introdueix titol:</label>
+                        <input type="text" class="form-control" id="titol" name="titol">
+                        <label for="keywords">Introdueix autor:</label>
+                        <input type="text" class="form-control" id="autor" name="autor">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Cerca</button> <br><br>
+                </div>
+            </form>
+
         </div>
+        <script>
+        function addPath(){
+            var form = document.getElementById("buscarImatge");
+            var camp = document.getElementById("camp").value;
+            var action_src;
+            switch (camp) {
+                case 'ID':
+                    action_src = "/practica4/webresources/gestorImagenes/searchID/" + document.getElementsByName("valorCerca")[0].value;
+                    break;
+                case 'Titol':
+                    action_src = "/practica4/webresources/gestorImagenes/searchTitle/" + document.getElementsByName("valorCerca")[0].value;
+                    break;
+                case 'Autor':
+                    action_src = "/practica4/webresources/gestorImagenes/searchAuthor/" + document.getElementsByName("valorCerca")[0].value;
+                    break;
+                case 'Data Creacio':
+                    action_src = "/practica4/webresources/gestorImagenes/searchCreationDate/" + document.getElementsByName("valorCerca")[0].value;
+                    break;
+                case 'Keywords':
+                    action_src = "/practica4/webresources/gestorImagenes/searchKeywords/" + document.getElementsByName("valorCerca")[0].value;
+                    break;
+            }
+            form.action = action_src;
+        }
+        
+        function combinedSearch(){
+            var form = document.getElementById("busquedaCombinada");
+            var titol = document.getElementsByName("titol")[0].value;
+            var autor = document.getElementsByName("autor")[0].value;
+            var action_src = "/practica4/webresources/gestorImagenes/searchTitleAuthor/" + titol + "/" + autor;
+            form.action = action_src;
+            
+        }
+        </script>
     </body>
 </html>

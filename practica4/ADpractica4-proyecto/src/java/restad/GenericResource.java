@@ -95,7 +95,7 @@ public class GenericResource {
                 String query;
                 Class.forName("org.sqlite.JDBC");           
 
-                connection = DriverManager.getConnection("jdbc:sqlite:C:\\Users\\fenix\\Desktop\\AD\\PracticasAD\\practica4\\ADpractica4-proyecto\\practica4.db");       
+                connection = DriverManager.getConnection("jdbc:sqlite:/Users/carles/Desktop/PracticasAD/practica4/ADpractica4-proyecto/practica4.db");       
                 query = "create table if not exists image (id integer primary key, title varchar (256) NOT NULL, description varchar (1024) NOT NULL, keywords "
                 + "varchar (256) NOT NULL, author varchar (255) NOT NULL, creation_date varchar (10) NOT NULL, storage_date varchar (10) NOT NULL, fileName varchar (512) NOT NULL UNIQUE, "
                 + "foreign key (author) references usuarios(id_usuario))";
@@ -179,7 +179,7 @@ public class GenericResource {
                 PreparedStatement statement;
                 String query;
                 Class.forName("org.sqlite.JDBC");
-                connection = DriverManager.getConnection("jdbc:sqlite:C:\\Users\\fenix\\Desktop\\AD\\PracticasAD\\practica4\\ADpractica4-proyecto\\practica4.db");       
+                connection = DriverManager.getConnection("jdbc:sqlite:/Users/carles/Desktop/PracticasAD/practica4/ADpractica4-proyecto/practica4.db");       
                                        
                 query = "update image set title=?, description=? , keywords=?, filename=? ,author=? where id=?";
                 statement = connection.prepareStatement(query);
@@ -197,8 +197,9 @@ public class GenericResource {
                         + "<br>&nbsp&nbsp&nbsp&nbspTítulo: "+title+"<br>"
                         + "&nbsp&nbsp&nbsp&nbspDescripción: "+description+"<br>"
                         + "&nbsp&nbsp&nbsp&nbspPalabras clave: "+keywords+"<br>"
-                        + "&nbsp&nbsp&nbsp&nbspNombre del fichero: "+fileName+"<br><br>"
-                        + "<a href=\"menu.jsp\">"
+                        + "&nbsp&nbsp&nbsp&nbspNombre del fichero: "+fileName+"<br>"
+                        + "&nbsp&nbsp&nbsp&nbspAutor: "+author+"<br><br>"
+                        + "<a href=\"http://localhost:8080/practica4/menu.jsp\">"
                         + "<small> Volver al menú </small></a>";
                 
             } catch (SQLException | ClassNotFoundException e) {
@@ -222,6 +223,7 @@ public class GenericResource {
     * http://localhost:8080/practica4/webresources/gestorImagenes/list
     * @return
     */
+    
     @Path("list")
     @GET
     @Produces(MediaType.TEXT_HTML)
@@ -244,7 +246,7 @@ public class GenericResource {
                 List<String> authorPics = new ArrayList<String>();
                 List<Pair<String,String>> nombresFotos = new ArrayList<Pair<String,String>>();
                 try{
-                    connection = DriverManager.getConnection("jdbc:sqlite:C:\\Users\\fenix\\Desktop\\AD\\PracticasAD\\practica4\\ADpractica4-proyecto\\practica4.db");
+                    connection = DriverManager.getConnection("jdbc:sqlite:/Users/carles/Desktop/PracticasAD/practica4/ADpractica4-proyecto/practica4.db");
                        
                     //guardaremos tambien nombre y archivo de las fotos
                     query = "select * from image";
@@ -252,9 +254,9 @@ public class GenericResource {
                     ResultSet rs = statement.executeQuery();
                     
                     while (rs.next()){
-                        html += "id: " + rs.getString(1) + "title: " + rs.getString(2) + "description: " + rs.getString(3)
-                                + "keywords: " + rs.getString(4) + "author: " + rs.getString(5) + "creation: " + rs.getString(6) + "<br>"
-                                + "<a href=\\\"modificarImagen.jsp?id="+ rs.getString(1) +"\\\"> Modificar Imagen </a>\" <br>";
+                        html += "<b>id:</b> " + rs.getString(1) + "<br><b>title:</b> " + rs.getString(2) + "<br><b>description:</b> " + rs.getString(3)
+                                + "<br><b>keywords:</b> " + rs.getString(4) + "<br><b>author:</b> " + rs.getString(5) + "<br><b>creation:</b> " + rs.getString(6) + "<br>"
+                                + "<a href=http://localhost:8080/practica4/modificarImagen.jsp?id="+ rs.getString(1) +"> Modificar Imagen </a> <br><br><br>";
                     }
                     
                 }catch (SQLException e) {
@@ -295,17 +297,17 @@ public class GenericResource {
         html += "<body><h2>Búsqueda por ID</h2>";
         try {
             Class.forName("org.sqlite.JDBC");
-            connection = DriverManager.getConnection("jdbc:sqlite:C:\\Users\\fenix\\Desktop\\AD\\PracticasAD\\practica4\\ADpractica4-proyecto\\practica4.db");
-            PreparedStatement statement = connection.prepareStatement("select * from imatges where id_imatge = ?");
+            connection = DriverManager.getConnection("jdbc:sqlite:/Users/carles/Desktop/PracticasAD/practica4/ADpractica4-proyecto/practica4.db");
+            PreparedStatement statement = connection.prepareStatement("select * from image where id = ?");
             statement.setInt(1,id);
             ResultSet rs = statement.executeQuery();
             while(rs.next()){
-                html = html + "<b> ID: <\\b>" + String.valueOf(rs.getInt("id")) + "<br>";
-                html = html + "<b> Título: <\\b>" + rs.getString("title") + "<br>";
-                html = html + "<b> Descripción: <\\b>" + rs.getString("description") + "<br>";
-                html = html + "<b> Keywords: <\\b>" + rs.getString("keywords") + "<br>";
-                html = html + "<b> Autor: <\\b>" + rs.getString("author") + "<br>";
-                html = html + "<b> Fecha creación: <\\b>" + rs.getString("creation_date") + "<br>";
+                html = html + "<b> ID: </b>" + String.valueOf(rs.getInt("id")) + "<br>";
+                html = html + "<b> Título: </b>" + rs.getString("title") + "<br>";
+                html = html + "<b> Descripción: </b>" + rs.getString("description") + "<br>";
+                html = html + "<b> Keywords: </b>" + rs.getString("keywords") + "<br>";
+                html = html + "<b> Autor: </b>" + rs.getString("author") + "<br>";
+                html = html + "<b> Fecha creación: </b>" + rs.getString("creation_date") + "<br>";
                 html += "<br>";
             }
             html += "<a href='http://localhost:8080/practica4/'> <small> Volver al menú </small> </a>";    
@@ -346,17 +348,17 @@ public class GenericResource {
         html += "<body><h2>Búsqueda por título</h2>";
         try {
             Class.forName("org.sqlite.JDBC");
-            connection = DriverManager.getConnection("jdbc:sqlite:C:\\Users\\fenix\\Desktop\\AD\\PracticasAD\\practica4\\ADpractica4-proyecto\\practica4.db");
-            PreparedStatement statement = connection.prepareStatement("select * from imatges where where titol_imatge like ?");
-            statement.setString(1,title);
+            connection = DriverManager.getConnection("jdbc:sqlite:/Users/carles/Desktop/PracticasAD/practica4/ADpractica4-proyecto/practica4.db");
+            PreparedStatement statement = connection.prepareStatement("select * from image where title like ?");
+            statement.setString(1,'%' + title + '%');
             ResultSet rs = statement.executeQuery();
             while(rs.next()){
-                html = html + "<b> ID: <\\b>" + String.valueOf(rs.getInt("id")) + "<br>";
-                html = html + "<b> Título: <\\b>" + rs.getString("title") + "<br>";
-                html = html + "<b> Descripción: <\\b>" + rs.getString("description") + "<br>";
-                html = html + "<b> Keywords: <\\b>" + rs.getString("keywords") + "<br>";
-                html = html + "<b> Autor: <\\b>" + rs.getString("author") + "<br>";
-                html = html + "<b> Fecha creación: <\\b>" + rs.getString("creation_date") + "<br>";
+                html = html + "<b> ID: </b>" + String.valueOf(rs.getInt("id")) + "<br>";
+                html = html + "<b> Título: </b>" + rs.getString("title") + "<br>";
+                html = html + "<b> Descripción: </b>" + rs.getString("description") + "<br>";
+                html = html + "<b> Keywords: </b>" + rs.getString("keywords") + "<br>";
+                html = html + "<b> Autor: </b>" + rs.getString("author") + "<br>";
+                html = html + "<b> Fecha creación: </b>" + rs.getString("creation_date") + "<br>";
                 html += "<br>";
             }
             html += "<a href='http://localhost:8080/practica4/'> <small> Volver al menú </small> </a>";    
@@ -397,17 +399,17 @@ public class GenericResource {
         html += "<body><h2>Búsqueda por fecha de creación</h2>";
         try {
             Class.forName("org.sqlite.JDBC");
-            connection = DriverManager.getConnection("jdbc:sqlite:C:\\Users\\fenix\\Desktop\\AD\\PracticasAD\\practica4\\ADpractica4-proyecto\\practica4.db");
-            PreparedStatement statement = connection.prepareStatement("select * from imatges where where creation_date like ?");
+            connection = DriverManager.getConnection("jdbc:sqlite:/Users/carles/Desktop/PracticasAD/practica4/ADpractica4-proyecto/practica4.db");
+            PreparedStatement statement = connection.prepareStatement("select * from image where creation_date like ?");
             statement.setString(1,date);
             ResultSet rs = statement.executeQuery();
             while(rs.next()){
-                html = html + "<b> ID: <\\b>" + String.valueOf(rs.getInt("id")) + "<br>";
-                html = html + "<b> Título: <\\b>" + rs.getString("title") + "<br>";
-                html = html + "<b> Descripción: <\\b>" + rs.getString("description") + "<br>";
-                html = html + "<b> Keywords: <\\b>" + rs.getString("keywords") + "<br>";
-                html = html + "<b> Autor: <\\b>" + rs.getString("author") + "<br>";
-                html = html + "<b> Fecha creación: <\\b>" + rs.getString("creation_date") + "<br>";
+                html = html + "<b> ID: </b>" + String.valueOf(rs.getInt("id")) + "<br>";
+                html = html + "<b> Título: </b>" + rs.getString("title") + "<br>";
+                html = html + "<b> Descripción: </b>" + rs.getString("description") + "<br>";
+                html = html + "<b> Keywords: </b>" + rs.getString("keywords") + "<br>";
+                html = html + "<b> Autor: </b>" + rs.getString("author") + "<br>";
+                html = html + "<b> Fecha creación: </b>" + rs.getString("creation_date") + "<br>";
                 html += "<br>";
             }
             html += "<a href='http://localhost:8080/practica4/'> <small> Volver al menú </small> </a>";    
@@ -448,17 +450,17 @@ public class GenericResource {
         html += "<body><h2>Búsqueda por autor</h2>";
         try {
             Class.forName("org.sqlite.JDBC");
-            connection = DriverManager.getConnection("jdbc:sqlite:C:\\Users\\fenix\\Desktop\\AD\\PracticasAD\\practica4\\ADpractica4-proyecto\\practica4.db");
-            PreparedStatement statement = connection.prepareStatement("select * from imatges where where author like ?");
-            statement.setString(1,author);
+            connection = DriverManager.getConnection("jdbc:sqlite:/Users/carles/Desktop/PracticasAD/practica4/ADpractica4-proyecto/practica4.db");
+            PreparedStatement statement = connection.prepareStatement("select * from image where author like ?");
+            statement.setString(1, '%' + author + '%');
             ResultSet rs = statement.executeQuery();
             while(rs.next()){
-                html = html + "<b> ID: <\\b>" + String.valueOf(rs.getInt("id")) + "<br>";
-                html = html + "<b> Título: <\\b>" + rs.getString("title") + "<br>";
-                html = html + "<b> Descripción: <\\b>" + rs.getString("description") + "<br>";
-                html = html + "<b> Keywords: <\\b>" + rs.getString("keywords") + "<br>";
-                html = html + "<b> Autor: <\\b>" + rs.getString("author") + "<br>";
-                html = html + "<b> Fecha creación: <\\b>" + rs.getString("creation_date") + "<br>";
+                html = html + "<b> ID: </b>" + String.valueOf(rs.getInt("id")) + "<br>";
+                html = html + "<b> Título: </b>" + rs.getString("title") + "<br>";
+                html = html + "<b> Descripción: </b>" + rs.getString("description") + "<br>";
+                html = html + "<b> Keywords: </b>" + rs.getString("keywords") + "<br>";
+                html = html + "<b> Autor: </b>" + rs.getString("author") + "<br>";
+                html = html + "<b> Fecha creación: </b>" + rs.getString("creation_date") + "<br>";
                 html += "<br>";
             }
             html += "<a href='http://localhost:8080/practica4/'> <small> Volver al menú </small> </a>";    
@@ -499,17 +501,17 @@ public class GenericResource {
         html += "<body><h2>Búsqueda por palabras clave</h2>";
         try {
             Class.forName("org.sqlite.JDBC");
-            connection = DriverManager.getConnection("jdbc:sqlite:C:\\Users\\fenix\\Desktop\\AD\\PracticasAD\\practica4\\ADpractica4-proyecto\\practica4.db");
-            PreparedStatement statement = connection.prepareStatement("select * from imatges where where keywords like ?");
-            statement.setString(1,keywords);
+            connection = DriverManager.getConnection("jdbc:sqlite:/Users/carles/Desktop/PracticasAD/practica4/ADpractica4-proyecto/practica4.db");
+            PreparedStatement statement = connection.prepareStatement("select * from image where keywords like ?");
+            statement.setString(1, '%' + keywords + '%');
             ResultSet rs = statement.executeQuery();
             while(rs.next()){
-                html = html + "<b> ID: <\\b>" + String.valueOf(rs.getInt("id")) + "<br>";
-                html = html + "<b> Título: <\\b>" + rs.getString("title") + "<br>";
-                html = html + "<b> Descripción: <\\b>" + rs.getString("description") + "<br>";
-                html = html + "<b> Keywords: <\\b>" + rs.getString("keywords") + "<br>";
-                html = html + "<b> Autor: <\\b>" + rs.getString("author") + "<br>";
-                html = html + "<b> Fecha creación: <\\b>" + rs.getString("creation_date") + "<br>";
+                html = html + "<b> ID: </b>" + String.valueOf(rs.getInt("id")) + "<br>";
+                html = html + "<b> Título: </b>" + rs.getString("title") + "<br>";
+                html = html + "<b> Descripción: </b>" + rs.getString("description") + "<br>";
+                html = html + "<b> Keywords: </b>" + rs.getString("keywords") + "<br>";
+                html = html + "<b> Autor: </b>" + rs.getString("author") + "<br>";
+                html = html + "<b> Fecha creación: </b>" + rs.getString("creation_date") + "<br>";
                 html += "<br>";
             }
             html += "<a href='http://localhost:8080/practica4/'> <small> Volver al menú </small> </a>";    
@@ -540,27 +542,27 @@ public class GenericResource {
     * @param keywords
     * @return
     */
-    @Path("searchKeywords/{title},{keywords}")
+    @Path("searchTitleAuthor/{title}/{author}")
     @GET
     @Produces(MediaType.TEXT_HTML)
-    public String searchByTitleKeywords (@PathParam("title") String title, @PathParam("keywords") String keywords){
+    public String searchByTitleKeywords (@PathParam("title") String title, @PathParam("author") String author){
         Connection connection = null;
         html = cabeceras("Búsqueda combinada");
         html += "<body><h2>Búsqueda combinada título y palabras clave</h2>";
         try {
             Class.forName("org.sqlite.JDBC");
-            connection = DriverManager.getConnection("jdbc:sqlite:C:\\Users\\fenix\\Desktop\\AD\\PracticasAD\\practica4\\ADpractica4-proyecto\\practica4.db");
-            PreparedStatement statement = connection.prepareStatement("select * from imatges where titol_imatge like ? and paraula_clau like ?");
+            connection = DriverManager.getConnection("jdbc:sqlite:/Users/carles/Desktop/PracticasAD/practica4/ADpractica4-proyecto/practica4.db");
+            PreparedStatement statement = connection.prepareStatement("select * from image where title like ? and author like ?");
             statement.setString(1,"%" + title + "%");
-            statement.setString(2,"%" + keywords + "%");
+            statement.setString(2,"%" + author + "%");
             ResultSet rs = statement.executeQuery();
             while(rs.next()){
-                html = html + "<b> ID: <\\b>" + String.valueOf(rs.getInt("id")) + "<br>";
-                html = html + "<b> Título: <\\b>" + rs.getString("title") + "<br>";
-                html = html + "<b> Descripción: <\\b>" + rs.getString("description") + "<br>";
-                html = html + "<b> Keywords: <\\b>" + rs.getString("keywords") + "<br>";
-                html = html + "<b> Autor: <\\b>" + rs.getString("author") + "<br>";
-                html = html + "<b> Fecha creación: <\\b>" + rs.getString("creation_date") + "<br>";
+                html = html + "<b> ID: </b>" + String.valueOf(rs.getInt("id")) + "<br>";
+                html = html + "<b> Título: </b>" + rs.getString("title") + "<br>";
+                html = html + "<b> Descripción: </b>" + rs.getString("description") + "<br>";
+                html = html + "<b> Keywords: </b>" + rs.getString("keywords") + "<br>";
+                html = html + "<b> Autor: </b>" + rs.getString("author") + "<br>";
+                html = html + "<b> Fecha creación: </b>" + rs.getString("creation_date") + "<br>";
                 html += "<br>";
             }
             html += "<a href='http://localhost:8080/practica4/'> <small> Volver al menú </small> </a>";    
