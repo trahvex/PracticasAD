@@ -44,7 +44,7 @@
                         + "Palabras clave (separadas por comas y sin espacios):<input type=\"text\" name=\"keywords\"> <br><br>"
                         + "Fichero de la imagen:<input type=\"text\" name=\"fileName\"/> <br><br>"
                         + "Autor:<input type=\"text\" name=\"author\" /> <br><br>"
-                        + "<input type=\"hidden\" name=\"id\"\">"
+                        + "<input type=\"hidden\" name=\"id\"\" value=\"" + request.getParameter("id") + "\">" 
                         + "<input type=\"submit\" value=\"Enviar\" /> <br><br>"
                         + "</form>");
             %>
