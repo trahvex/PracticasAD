@@ -4,11 +4,35 @@
 <xsd:import namespace="http://gestor1/" schemaLocation="http://localhost:8080/GestorImagenes/GestorImagenes?xsd=1"/>
 </xsd:schema>
 </types>
+<message name="RegisterImage">
+<part name="parameters" element="tns:RegisterImage"/>
+</message>
+<message name="RegisterImageResponse">
+<part name="parameters" element="tns:RegisterImageResponse"/>
+</message>
+<message name="ModifyImage">
+<part name="parameters" element="tns:ModifyImage"/>
+</message>
+<message name="ModifyImageResponse">
+<part name="parameters" element="tns:ModifyImageResponse"/>
+</message>
 <message name="ListImages">
 <part name="parameters" element="tns:ListImages"/>
 </message>
 <message name="ListImagesResponse">
 <part name="parameters" element="tns:ListImagesResponse"/>
+</message>
+<message name="SearchbyId">
+<part name="parameters" element="tns:SearchbyId"/>
+</message>
+<message name="SearchbyIdResponse">
+<part name="parameters" element="tns:SearchbyIdResponse"/>
+</message>
+<message name="SearchbyTitle">
+<part name="parameters" element="tns:SearchbyTitle"/>
+</message>
+<message name="SearchbyTitleResponse">
+<part name="parameters" element="tns:SearchbyTitleResponse"/>
 </message>
 <message name="SearchbyCreaDate">
 <part name="parameters" element="tns:SearchbyCreaDate"/>
@@ -28,34 +52,26 @@
 <message name="SearchbyKeywordsResponse">
 <part name="parameters" element="tns:SearchbyKeywordsResponse"/>
 </message>
-<message name="SearchbyId">
-<part name="parameters" element="tns:SearchbyId"/>
-</message>
-<message name="SearchbyIdResponse">
-<part name="parameters" element="tns:SearchbyIdResponse"/>
-</message>
-<message name="RegisterImage">
-<part name="parameters" element="tns:RegisterImage"/>
-</message>
-<message name="RegisterImageResponse">
-<part name="parameters" element="tns:RegisterImageResponse"/>
-</message>
-<message name="ModifyImage">
-<part name="parameters" element="tns:ModifyImage"/>
-</message>
-<message name="ModifyImageResponse">
-<part name="parameters" element="tns:ModifyImageResponse"/>
-</message>
-<message name="SearchbyTitle">
-<part name="parameters" element="tns:SearchbyTitle"/>
-</message>
-<message name="SearchbyTitleResponse">
-<part name="parameters" element="tns:SearchbyTitleResponse"/>
-</message>
 <portType name="GestorImagenes">
+<operation name="RegisterImage">
+<input wsam:Action="http://gestor1/GestorImagenes/RegisterImageRequest" message="tns:RegisterImage"/>
+<output wsam:Action="http://gestor1/GestorImagenes/RegisterImageResponse" message="tns:RegisterImageResponse"/>
+</operation>
+<operation name="ModifyImage">
+<input wsam:Action="http://gestor1/GestorImagenes/ModifyImageRequest" message="tns:ModifyImage"/>
+<output wsam:Action="http://gestor1/GestorImagenes/ModifyImageResponse" message="tns:ModifyImageResponse"/>
+</operation>
 <operation name="ListImages">
 <input wsam:Action="http://gestor1/GestorImagenes/ListImagesRequest" message="tns:ListImages"/>
 <output wsam:Action="http://gestor1/GestorImagenes/ListImagesResponse" message="tns:ListImagesResponse"/>
+</operation>
+<operation name="SearchbyId">
+<input wsam:Action="http://gestor1/GestorImagenes/SearchbyIdRequest" message="tns:SearchbyId"/>
+<output wsam:Action="http://gestor1/GestorImagenes/SearchbyIdResponse" message="tns:SearchbyIdResponse"/>
+</operation>
+<operation name="SearchbyTitle">
+<input wsam:Action="http://gestor1/GestorImagenes/SearchbyTitleRequest" message="tns:SearchbyTitle"/>
+<output wsam:Action="http://gestor1/GestorImagenes/SearchbyTitleResponse" message="tns:SearchbyTitleResponse"/>
 </operation>
 <operation name="SearchbyCreaDate">
 <input wsam:Action="http://gestor1/GestorImagenes/SearchbyCreaDateRequest" message="tns:SearchbyCreaDate"/>
@@ -69,26 +85,46 @@
 <input wsam:Action="http://gestor1/GestorImagenes/SearchbyKeywordsRequest" message="tns:SearchbyKeywords"/>
 <output wsam:Action="http://gestor1/GestorImagenes/SearchbyKeywordsResponse" message="tns:SearchbyKeywordsResponse"/>
 </operation>
-<operation name="SearchbyId">
-<input wsam:Action="http://gestor1/GestorImagenes/SearchbyIdRequest" message="tns:SearchbyId"/>
-<output wsam:Action="http://gestor1/GestorImagenes/SearchbyIdResponse" message="tns:SearchbyIdResponse"/>
-</operation>
-<operation name="RegisterImage">
-<input wsam:Action="http://gestor1/GestorImagenes/RegisterImageRequest" message="tns:RegisterImage"/>
-<output wsam:Action="http://gestor1/GestorImagenes/RegisterImageResponse" message="tns:RegisterImageResponse"/>
-</operation>
-<operation name="ModifyImage">
-<input wsam:Action="http://gestor1/GestorImagenes/ModifyImageRequest" message="tns:ModifyImage"/>
-<output wsam:Action="http://gestor1/GestorImagenes/ModifyImageResponse" message="tns:ModifyImageResponse"/>
-</operation>
-<operation name="SearchbyTitle">
-<input wsam:Action="http://gestor1/GestorImagenes/SearchbyTitleRequest" message="tns:SearchbyTitle"/>
-<output wsam:Action="http://gestor1/GestorImagenes/SearchbyTitleResponse" message="tns:SearchbyTitleResponse"/>
-</operation>
 </portType>
 <binding name="GestorImagenesPortBinding" type="tns:GestorImagenes">
 <soap:binding transport="http://schemas.xmlsoap.org/soap/http" style="document"/>
+<operation name="RegisterImage">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+</operation>
+<operation name="ModifyImage">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+</operation>
 <operation name="ListImages">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+</operation>
+<operation name="SearchbyId">
+<soap:operation soapAction=""/>
+<input>
+<soap:body use="literal"/>
+</input>
+<output>
+<soap:body use="literal"/>
+</output>
+</operation>
+<operation name="SearchbyTitle">
 <soap:operation soapAction=""/>
 <input>
 <soap:body use="literal"/>
@@ -116,42 +152,6 @@
 </output>
 </operation>
 <operation name="SearchbyKeywords">
-<soap:operation soapAction=""/>
-<input>
-<soap:body use="literal"/>
-</input>
-<output>
-<soap:body use="literal"/>
-</output>
-</operation>
-<operation name="SearchbyId">
-<soap:operation soapAction=""/>
-<input>
-<soap:body use="literal"/>
-</input>
-<output>
-<soap:body use="literal"/>
-</output>
-</operation>
-<operation name="RegisterImage">
-<soap:operation soapAction=""/>
-<input>
-<soap:body use="literal"/>
-</input>
-<output>
-<soap:body use="literal"/>
-</output>
-</operation>
-<operation name="ModifyImage">
-<soap:operation soapAction=""/>
-<input>
-<soap:body use="literal"/>
-</input>
-<output>
-<soap:body use="literal"/>
-</output>
-</operation>
-<operation name="SearchbyTitle">
 <soap:operation soapAction=""/>
 <input>
 <soap:body use="literal"/>
