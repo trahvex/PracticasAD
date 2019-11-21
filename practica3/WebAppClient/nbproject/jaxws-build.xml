@@ -42,5 +42,21 @@
         <delete dir="${build.generated.sources.dir}/jax-ws/gestor1"/>
         <delete dir="${build.generated.dir}/jax-wsCache/GestorImagenes"/>
     </target>
-    <target name="wsimport-client-generate" depends="wsimport-client-GestorImagenes"/>
+    <target name="wsimport-client-GestorImagenes_1" depends="wsimport-init">
+        <mkdir dir="${build.generated.dir}/jax-wsCache/GestorImagenes_1"/>
+        <wsimport sourcedestdir="${build.generated.dir}/jax-wsCache/GestorImagenes_1" destdir="${build.generated.dir}/jax-wsCache/GestorImagenes_1" wsdl="${basedir}/${conf-dir}xml-resources/web-service-references/GestorImagenes_1/wsdl/localhost_8080/GestorImagenes/GestorImagenes.wsdl" catalog="catalog.xml" encoding="${source.encoding}" extension="true" verbose="true" fork="false" wsdlLocation="http://localhost:8080/GestorImagenes/GestorImagenes?wsdl" xnocompile="true" xendorsed="true">
+            <depends file="${basedir}/${conf-dir}xml-resources/web-service-references/GestorImagenes_1/wsdl/localhost_8080/GestorImagenes/GestorImagenes.wsdl"/>
+            <produces dir="${build.generated.dir}/jax-wsCache/GestorImagenes_1"/>
+        </wsimport>
+        <copy todir="${build.generated.sources.dir}/jax-ws">
+            <fileset dir="${build.generated.dir}/jax-wsCache/GestorImagenes_1">
+                <include name="**/*.java"/>
+            </fileset>
+        </copy>
+    </target>
+    <target name="wsimport-client-clean-GestorImagenes_1" depends="-init-project">
+        <delete dir="${build.generated.sources.dir}/jax-ws/gestor1"/>
+        <delete dir="${build.generated.dir}/jax-wsCache/GestorImagenes_1"/>
+    </target>
+    <target name="wsimport-client-generate" depends="wsimport-client-GestorImagenes, wsimport-client-GestorImagenes_1"/>
 </project>

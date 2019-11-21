@@ -154,11 +154,13 @@ public class GenericResource {
     
     /**
     * POST method to register a new image
+    * @param id
     * @param title
     * @param description
     * @param keywords
     * @param author
     * @param crea_date
+    * @param fileName
     * @return
     */
     @Path("modify")

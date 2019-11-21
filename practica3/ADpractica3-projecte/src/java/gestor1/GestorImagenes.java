@@ -216,7 +216,7 @@ public class GestorImagenes {
                 retImage.setCreaDate(rs.getString("creation_date"));
                 retImage.setAltaDate(rs.getString("storage_date"));
                 retImage.setFilename(rs.getString("filename"));
-            }else return null
+            }else return null;
 
         }catch (SQLException e) {
             System.err.println(e.getMessage());
