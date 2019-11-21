@@ -4,7 +4,6 @@
  * and open the template in the editor.
  */
 
-
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -12,13 +11,10 @@ import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.sql.Connection;
-import java.sql.Date;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import javax.servlet.ServletException;
@@ -32,11 +28,11 @@ import javax.servlet.http.Part;
 
 /**
  *
- * @author fenix
+ * @author ruben.sanz.garcia
  */
-@WebServlet(name = "modificarImagen", urlPatterns = {"/modificarImagen"})
+@WebServlet(urlPatterns = {"/registrarImagen"})
 @MultipartConfig
-public class modificarImagen extends HttpServlet {
+public class registrarImagen extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -46,12 +42,12 @@ public class modificarImagen extends HttpServlet {
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
+     * @throws java.sql.SQLException
      */
-    
-    
-    protected void processRequestPOST(HttpServletRequest request, HttpServletResponse response)
+    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
+            response.setContentType("text/html;charset=UTF-8");
+            HttpSession sesion = request.getSession();
             PrintWriter out = response.getWriter();
             Connection connection = null;
             try {
@@ -59,58 +55,66 @@ public class modificarImagen extends HttpServlet {
                 PreparedStatement statement;
                 String query;
                 // load the sqlite-JDBC driver using the current class loader
-                Class.forName("org.sqlite.JDBC");
-                connection = DriverManager.getConnection("jdbc:sqlite:C:\\Users\\Carles\\Desktop\\ADpractica3\\ADpractica3-projecte\\practica3.db");       
+                Class.forName("org.sqlite.JDBC");           
+
+                connection = DriverManager.getConnection("jdbc:sqlite:C:\\Users\\fenix\\Desktop\\AD\\PracticasAD\\practica5\\ADpractica2_v2\\practica2.db");       
+                query = "create table if not exists image (id integer primary key, title varchar (256) NOT NULL, description varchar (1024) NOT NULL, keywords "
+                + "varchar (256) NOT NULL, author varchar (255) NOT NULL, creation_date varchar (10) NOT NULL, storage_date varchar (10) NOT NULL, filename varchar (512) NOT NULL UNIQUE, "
+                + "foreign key (author) references usuarios(id_usuario))";
+                statement = connection.prepareStatement(query);
+                statement.executeUpdate();
                 
-                //coge los campos del formulario
-                String title, description, keywords, nuevaImagen, imageOg;
+                String title, description, keywords, author, fileName, creation_date, storage_date;
                 title = request.getParameter("title");
                 description = request.getParameter("description");
                 keywords = request.getParameter("keyword");
-                nuevaImagen = request.getParameter("imagen");
-                imageOg = request.getParameter("imagen");
+                author = (String) sesion.getAttribute("usuario");
+                //fileName = request.getParameter("filename");
+                creation_date = (String)request.getParameter("creationDate");
+                 
+                //cogemos decha actual
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+                LocalDateTime dateTime = LocalDateTime.now();
+                storage_date = dateTime.format(formatter);
                 
-                //si la checkbox esta marcada queremos meter una nueva imagen
-                if(request.getParameter("upload") != null){
-                   //recogemos archivo subido, guardamos su nombre en fileName
-                    Part filePart = request.getPart("picture"); // Retrieves <input type="file" name="file">
-                    nuevaImagen = Paths.get(filePart.getSubmittedFileName()).getFileName().toString(); // MSIE fix.
-                    InputStream fileContent = filePart.getInputStream();
-                    //borramos el fichero antiguo
-                    File exhumable = new File("C:\\Users\\Carles\\Desktop\\ADpractica3\\ADpractica3-projecte\\web\\Imagenes\\"+imageOg); 
-                    exhumable.delete();
-                    //guardamos el fichero subido en nuestro directorio
-                    File uploads = new File("C:\\Users\\Carles\\Desktop\\ADpractica3\\ADpractica3-projecte\\web\\Imagenes");
-                    File fichero = new File(uploads, nuevaImagen);
-                    try (InputStream input = fileContent) {
-                        Files.copy(input, fichero.toPath());
-                    }                
+                //recogemos archivo subido, guardamos su nombre en fileName
+                Part filePart = request.getPart("picture"); // Retrieves <input type="file" name="file">
+                fileName = author + "_"  + Paths.get(filePart.getSubmittedFileName()).getFileName().toString(); // MSIE fix.
+                InputStream fileContent = filePart.getInputStream();
+                //guardamos el fichero subido en nuestro directorio
+                File uploads = new File("C:\\Users\\fenix\\Desktop\\AD\\PracticasAD\\practica5\\ADpractica2_v2\\web\\Imagenes");
+                File fichero = new File(uploads, fileName);
+                try (InputStream input = fileContent) {
+                    Files.copy(input, fichero.toPath());
                 }
                 
-                        
-                query = "update image set title=?, description=? , keywords=?, filename=? where filename=?";//, creation_date=?";
+                query = "select max(id) from image";
                 statement = connection.prepareStatement(query);
-                statement.setString(1, title); //titulo imagen
-                statement.setString(2, description); //descripcion imagen
-                statement.setString(3, keywords); //palabras clave
-                statement.setString(4, nuevaImagen); //palabras clave
-                statement.setString(5, imageOg);
+                ResultSet rs = statement.executeQuery();
+                int newId = 1;
+                if(rs.next())
+                    newId= rs.getInt(1) + 1;
+                 
+                        
+                query = "insert into image (id, title, description, keywords, author, creation_date, storage_date, filename)"
+                        + "values(?, ?, ?, ?, ?, ?, ?, ?)";
+                statement = connection.prepareStatement(query);
+                statement.setInt(1, newId); //id imagen
+                statement.setString(2, title); //titulo imagen
+                statement.setString(3, description); //descripcion imagen
+                statement.setString(4, keywords); //palabras clave
+                statement.setString(5, author); //autor
+                statement.setString(6, creation_date); //fecha creacion  
+                statement.setString(7, storage_date); //fecha alta (actual)
+                statement.setString(8, fileName);  //nombre fichero           
                 statement.executeUpdate();
                 
-                //todo chido pos te presenta mensaje de exito
-                out.write("<h2> Modificación ejecutada con exito </h2>"
-                        + "<b>Información actual:</b><br>"
-                        + "<br>&nbsp&nbsp&nbsp&nbspTítulo: "+title+"<br>"
-                        + "&nbsp&nbsp&nbsp&nbspDescripción: "+description+"<br>"
-                        + "&nbsp&nbsp&nbsp&nbspPalabras clave: "+keywords+"<br>"
-                        + "&nbsp&nbsp&nbsp&nbspNombre del fichero: "+nuevaImagen+"<br><br>"
-                        + "<a href=\"menu.jsp\">"
-                        + "<small> Volver al menú </small></a>");
+                response.sendRedirect("exitoRegistro.jsp");
                 
             } catch (SQLException | ClassNotFoundException e) {
                 System.err.println(e.getMessage());
                 out.println(e.getMessage());
-                response.sendRedirect("error.jsp");
+                 response.sendRedirect("error.jsp");
             }finally {
                 try {
                     if (connection != null) {
@@ -136,7 +140,7 @@ public class modificarImagen extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        //processRequestGET(request, response);
+        //processRequest(request, response);
     }
 
     /**
@@ -150,7 +154,7 @@ public class modificarImagen extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequestPOST(request, response);
+            processRequest(request, response);
     }
 
     /**
@@ -162,7 +166,5 @@ public class modificarImagen extends HttpServlet {
     public String getServletInfo() {
         return "Short description";
     }// </editor-fold>
-
-    
 
 }

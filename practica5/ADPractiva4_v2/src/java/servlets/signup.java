@@ -40,10 +40,11 @@ public class signup extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         HttpSession sesion = request.getSession();
-        String usu, pass;
+        String usu, pass, pass2;
         usu = request.getParameter("user");
         pass = request.getParameter("password");
-        if(usu.equals("") || pass.equals("")){
+        pass2 = request.getParameter("password2");
+        if(usu.equals("") || pass.equals("") || !(pass.equals(pass2))){
             response.sendRedirect("error.jsp");
         }
         else {
@@ -57,8 +58,7 @@ public class signup extends HttpServlet {
                 // load the sqlite-JDBC driver using the current class loader
                 Class.forName("org.sqlite.JDBC");           
 
-                Path path = Paths.get("C:\\Users\\Carles\\Desktop\\ADpractica3\\ADpractica3-projecte\\practica3.db");
-                connection = DriverManager.getConnection("jdbc:sqlite:C:\\Users\\Carles\\Desktop\\ADpractica3\\ADpractica3-projecte\\practica3.db");
+                connection = DriverManager.getConnection("jdbc:sqlite:C:\\Users\\fenix\\Desktop\\AD\\PracticasAD\\practica5\\ADPractiva4_v2\\practica4.db");
 
                 query = "create table if not exists usuarios  (id_usuario string primary key, password string)";
                 statement = connection.prepareStatement(query);                        

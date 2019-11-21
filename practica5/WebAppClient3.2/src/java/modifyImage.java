@@ -53,98 +53,40 @@ public class modifyImage extends HttpServlet {
             int id = Integer.parseInt(request.getParameter("id"));
             Image img = searchbyId(id);
             if (img == null) out.println("No s'ha pogut modificar l'imatge");
-            int returnCode;
+            int returnCode = 0;
             
             switch(request.getParameter("camp")) {
                 case "Autor":
                     img.setAuthor(valor);
-                    returnCode = modifyImage(img);
-                    if (returnCode == 0) out.println("No s'ha pogut modificar l'imatge");
-                    else {
-                        out.println("<h2>Imatge modificada:</h2><p>");
-                        out.println("<br>ID: " + img.getId());
-                        out.println("<br>Titol: " + img.getTitle());
-                        out.println("<br>Autor: " + img.getAuthor());
-                        out.println("<br>Descripcio: " + img.getDescription());
-                        out.println("<br>Keywords: " + img.getKeywords());
-                        out.println("<br>Data creacio: " + img.getCreaDate());
-                        out.println("<br>Data d'alta: " + img.getAltaDate());
-                        out.println("<br>Filename: " + img.getFilename());
-                        out.println("</p><br>");
-                    }
-                    break;
-                    
+                    break;                                        
                 case "Titol":
                     img.setTitle(valor);
-                    returnCode = modifyImage(img);
-                    if (returnCode == 0) out.println("No s'ha pogut modificar l'imatge");
-                    else {
-                        out.println("<h2>Imatge modificada:</h2><p>");
-                        out.println("<br>ID: " + img.getId());
-                        out.println("<br>Titol: " + img.getTitle());
-                        out.println("<br>Autor: " + img.getAuthor());
-                        out.println("<br>Descripcio: " + img.getDescription());
-                        out.println("<br>Keywords: " + img.getKeywords());
-                        out.println("<br>Data creacio: " + img.getCreaDate());
-                        out.println("<br>Data d'alta: " + img.getAltaDate());
-                        out.println("<br>Filename: " + img.getFilename());
-                        out.println("</p><br>");
-                    }
-                    break;
-                    
+                    break;                    
                 case "Data Creacio":
                     img.setCreaDate(valor);
-                    returnCode = modifyImage(img);
-                    if (returnCode == 0) out.println("No s'ha pogut modificar l'imatge");
-                    else {
-                        out.println("<h2>Imatge modificada:</h2><p>");
-                        out.println("<br>ID: " + img.getId());
-                        out.println("<br>Titol: " + img.getTitle());
-                        out.println("<br>Autor: " + img.getAuthor());
-                        out.println("<br>Descripcio: " + img.getDescription());
-                        out.println("<br>Keywords: " + img.getKeywords());
-                        out.println("<br>Data creacio: " + img.getCreaDate());
-                        out.println("<br>Data d'alta: " + img.getAltaDate());
-                        out.println("<br>Filename: " + img.getFilename());
-                        out.println("</p><br>");
-                    }
-                    break;
-                    
+                    break;                    
                 case "Keywords":
                     img.setKeywords(valor);
-                    returnCode = modifyImage(img);
-                    if (returnCode == 0) out.println("No s'ha pogut modificar l'imatge");
-                    else {
-                        out.println("<h2>Imatge modificada:</h2><p>");
-                        out.println("<br>ID: " + img.getId());
-                        out.println("<br>Titol: " + img.getTitle());
-                        out.println("<br>Autor: " + img.getAuthor());
-                        out.println("<br>Descripcio: " + img.getDescription());
-                        out.println("<br>Keywords: " + img.getKeywords());
-                        out.println("<br>Data creacio: " + img.getCreaDate());
-                        out.println("<br>Data d'alta: " + img.getAltaDate());
-                        out.println("<br>Filename: " + img.getFilename());
-                        out.println("</p><br>");
-                    }
-                    break;
+                    break;                    
                 case "Descripcio":
                     img.setDescription(valor);
-                    returnCode = modifyImage(img);
-                    if (returnCode == 0) out.println("No s'ha pogut modificar l'imatge");
-                    else {
-                        out.println("<h2>Imatge modificada:</h2><p>");
-                        out.println("<br>ID: " + img.getId());
-                        out.println("<br>Titol: " + img.getTitle());
-                        out.println("<br>Autor: " + img.getAuthor());
-                        out.println("<br>Descripcio: " + img.getDescription());
-                        out.println("<br>Keywords: " + img.getKeywords());
-                        out.println("<br>Data creacio: " + img.getCreaDate());
-                        out.println("<br>Data d'alta: " + img.getAltaDate());
-                        out.println("<br>Filename: " + img.getFilename());
-                        out.println("</p><br>");
-                    }
                     break;
-            }  
+            }
+            
+            returnCode = modifyImage(img);
+            if (returnCode == 0) out.println("No s'ha pogut modificar l'imatge");
+            else {
+                out.println("<h2>Imatge modificada:</h2><p>");
+                out.println("<br>ID: " + img.getId());
+                out.println("<br>Titol: " + img.getTitle());
+                out.println("<br>Autor: " + img.getAuthor());
+                out.println("<br>Descripcio: " + img.getDescription());
+                out.println("<br>Keywords: " + img.getKeywords());
+                out.println("<br>Data creacio: " + img.getCreaDate());
+                out.println("<br>Data d'alta: " + img.getAltaDate());
+                out.println("<br>Filename: " + img.getFilename());
+                out.println("</p><br>");
+            }
             out.println("</body>");
             out.println("</html>");
         }

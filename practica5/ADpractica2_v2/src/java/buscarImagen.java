@@ -48,7 +48,7 @@ public class buscarImagen extends HttpServlet {
             String query;
             // load the sqlite-JDBC driver using the current class loader
             Class.forName("org.sqlite.JDBC");
-            connection = DriverManager.getConnection("jdbc:sqlite:C:\\Users\\Carles\\Desktop\\ADpractica3\\ADpractica3-projecte\\practica3.db");
+            connection = DriverManager.getConnection("jdbc:sqlite:C:\\Users\\fenix\\Desktop\\AD\\PracticasAD\\practica5\\ADpractica2_v2\\practica2.db");
             
             HttpSession sesion = request.getSession();
             List<String> authorPics = new ArrayList<String>();

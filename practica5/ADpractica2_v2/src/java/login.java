@@ -55,14 +55,14 @@ public class login extends HttpServlet {
             // load the sqlite-JDBC driver using the current class loader
             Class.forName("org.sqlite.JDBC");           
             
-            Path path = Paths.get("C:\\Users\\Carles\\Desktop\\ADpractica3\\ADpractica3-projecte\\practica3.db");
+            Path path = Paths.get("C:\\Users\\fenix\\Desktop\\AD\\PracticasAD\\practica5\\ADpractica2_v2\\practica2.db");
             
             if (Files.exists(path)) {
-               connection = DriverManager.getConnection("jdbc:sqlite:C:\\Users\\Carles\\Desktop\\ADpractica3\\ADpractica3-projecte\\practica3.db");   
+               connection = DriverManager.getConnection("jdbc:sqlite:C:\\Users\\fenix\\Desktop\\AD\\PracticasAD\\practica5\\ADpractica2_v2\\practica2.db");   
             }
 
             if (Files.notExists(path)) {
-               connection = DriverManager.getConnection("jdbc:sqlite:C:\\Users\\Carles\\Desktop\\ADpractica3\\ADpractica3-projecte\\practica3.db");
+               connection = DriverManager.getConnection("jdbc:sqlite:C:\\Users\\fenix\\Desktop\\AD\\PracticasAD\\practica5\\ADpractica2_v2\\practica2.db");
                 query = "create table if not exists usuarios (id_usuario string primary key not null, password string)";
                 statement = connection.prepareStatement(query);                        
                 statement.executeUpdate();
