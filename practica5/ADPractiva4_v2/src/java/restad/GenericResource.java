@@ -106,8 +106,6 @@ public class GenericResource {
                     out.flush();
                     out.close();
             } catch (IOException e) {
-
-                    e.printStackTrace();
         }
     }
     
@@ -152,7 +150,7 @@ public class GenericResource {
             String query;
             Class.forName("org.sqlite.JDBC");           
 
-            connection = DriverManager.getConnection("jdbc:sqlite:C:\\Users\\ruben.sanz.garcia\\Desktop\\PracticasADgit\\practica5\\ADPractiva4_v2\\practica4.db");       
+            connection = DriverManager.getConnection("jdbc:sqlite:C:\\Users\\ruben.sanz.garcia.STARK.000\\Desktop\\PracticasADgit\\practica5\\ADPractiva4_v2\\practica4.db");       
             //creo tabla de imagenes si no existe
             query = "create table if not exists image (id integer primary key, title varchar (256) NOT NULL, description varchar (1024) NOT NULL, keywords "
             + "varchar (256) NOT NULL, author varchar (255) NOT NULL, creation_date varchar (10) NOT NULL, storage_date varchar (10) NOT NULL, fileName varchar (512) NOT NULL UNIQUE, "
@@ -186,7 +184,7 @@ public class GenericResource {
             statement.setString(8, author+"_"+fileDetail.getFileName()); 
             statement.executeUpdate();
             
-            String uploadedFileLocation = System.getProperty("user.dir")+ "/Imagenes/" + fileDetail.getFileName();
+            String uploadedFileLocation = "C:\\Users\\ruben.sanz.garcia.STARK.000\\Desktop\\PracticasADgit\\practica5\\ADPractiva4_v2\\Imagenes\\" + fileDetail.getFileName();
                          
             System.out.println("no es null"+ uploadedFileLocation);
             writeToFile(uploadedInputStream, uploadedFileLocation);
@@ -228,7 +226,7 @@ public class GenericResource {
         String query = null;
         try{
             Class.forName("org.sqlite.JDBC");
-            connection = DriverManager.getConnection("jdbc:sqlite:C:\\Users\\ruben.sanz.garcia\\Desktop\\PracticasADgit\\practica5\\ADPractiva4_v2\\practica4.db");    
+            connection = DriverManager.getConnection("jdbc:sqlite:C:\\Users\\ruben.sanz.garcia.STARK.000\\Desktop\\PracticasADgit\\practica5\\ADPractiva4_v2\\practica4.db");    
             
             switch(camp) {
             case "Autor":
@@ -249,9 +247,7 @@ public class GenericResource {
             statement.setString(1, valor);           
             statement.setInt(2, id);            
             statement.executeUpdate();
-        } catch (ClassNotFoundException ex) {
-            Logger.getLogger(GenericResource.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (SQLException ex) {
+        } catch (ClassNotFoundException | SQLException ex) {
             Logger.getLogger(GenericResource.class.getName()).log(Level.SEVERE, null, ex);
         }finally{
             cerrarConexion(connection);
@@ -287,7 +283,7 @@ public class GenericResource {
         List<String> authorPics = new ArrayList<String>();
         List<Pair<String,String>> nombresFotos = new ArrayList<Pair<String,String>>();
         try{
-            connection = DriverManager.getConnection("jdbc:sqlite:C:\\Users\\ruben.sanz.garcia\\Desktop\\PracticasADgit\\practica5\\ADPractiva4_v2\\practica4.db");
+            connection = DriverManager.getConnection("jdbc:sqlite:C:\\Users\\ruben.sanz.garcia.STARK.000\\Desktop\\PracticasADgit\\practica5\\ADPractiva4_v2\\practica4.db");
 
             //guardaremos tambien nombre y archivo de las fotos
             query = "select * from image";
@@ -333,7 +329,7 @@ public class GenericResource {
         html += "<body><h2>Búsqueda por ID</h2>";
         try {
             Class.forName("org.sqlite.JDBC");
-            connection = DriverManager.getConnection("jdbc:sqlite:C:\\Users\\ruben.sanz.garcia\\Desktop\\PracticasADgit\\practica5\\ADPractiva4_v2\\practica4.db");
+            connection = DriverManager.getConnection("jdbc:sqlite:C:\\Users\\ruben.sanz.garcia.STARK.000\\Desktop\\PracticasADgit\\practica5\\ADPractiva4_v2\\practica4.db");
             PreparedStatement statement = connection.prepareStatement("select * from image where id = ?");
             statement.setInt(1,id);
             printResultados(statement.executeQuery());        
@@ -365,7 +361,7 @@ public class GenericResource {
         html += "<body><h2>Búsqueda por título</h2>";
         try {
             Class.forName("org.sqlite.JDBC");
-            connection = DriverManager.getConnection("jdbc:sqlite:C:\\Users\\ruben.sanz.garcia\\Desktop\\PracticasADgit\\practica5\\ADPractiva4_v2\\practica4.db");
+            connection = DriverManager.getConnection("jdbc:sqlite:C:\\Users\\ruben.sanz.garcia.STARK.000\\Desktop\\PracticasADgit\\practica5\\ADPractiva4_v2\\practica4.db");
             PreparedStatement statement = connection.prepareStatement("select * from image where title like ?");
             statement.setString(1,'%' + title + '%');           
             printResultados(statement.executeQuery());      
@@ -398,7 +394,7 @@ public class GenericResource {
         html += "<body><h2>Búsqueda por fecha de creación</h2>";
         try {
             Class.forName("org.sqlite.JDBC");
-            connection = DriverManager.getConnection("jdbc:sqlite:C:\\Users\\ruben.sanz.garcia\\Desktop\\PracticasADgit\\practica5\\ADPractiva4_v2\\practica4.db");
+            connection = DriverManager.getConnection("jdbc:sqlite:C:\\Users\\ruben.sanz.garcia.STARK.000\\Desktop\\PracticasADgit\\practica5\\ADPractiva4_v2\\practica4.db");
             PreparedStatement statement = connection.prepareStatement("select * from image where creation_date like ?");
             statement.setString(1,date);
             printResultados(statement.executeQuery());      
@@ -431,7 +427,7 @@ public class GenericResource {
         html += "<body><h2>Búsqueda por autor</h2>";
         try {
             Class.forName("org.sqlite.JDBC");
-            connection = DriverManager.getConnection("jdbc:sqlite:C:\\Users\\ruben.sanz.garcia\\Desktop\\PracticasADgit\\practica5\\ADPractiva4_v2\\practica4.db");
+            connection = DriverManager.getConnection("jdbc:sqlite:C:\\Users\\ruben.sanz.garcia.STARK.000\\Desktop\\PracticasADgit\\practica5\\ADPractiva4_v2\\practica4.db");
             PreparedStatement statement = connection.prepareStatement("select * from image where author like ?");
             statement.setString(1, '%' + author + '%');
             printResultados(statement.executeQuery());      
@@ -464,7 +460,7 @@ public class GenericResource {
         html += "<body><h2>Búsqueda por palabras clave</h2>";
         try {
             Class.forName("org.sqlite.JDBC");
-            connection = DriverManager.getConnection("jdbc:sqlite:C:\\Users\\ruben.sanz.garcia\\Desktop\\PracticasADgit\\practica5\\ADPractiva4_v2\\practica4.db");
+            connection = DriverManager.getConnection("jdbc:sqlite:C:\\Users\\ruben.sanz.garcia.STARK.000\\Desktop\\PracticasADgit\\practica5\\ADPractiva4_v2\\practica4.db");
             PreparedStatement statement = connection.prepareStatement("select * from image where keywords like ?");
             statement.setString(1, '%' + keywords + '%');
             printResultados(statement.executeQuery());      
@@ -496,7 +492,7 @@ public class GenericResource {
         html += "<body><h2>Búsqueda combinada título y palabras clave</h2>";
         try {
             Class.forName("org.sqlite.JDBC");
-            connection = DriverManager.getConnection("jdbc:sqlite:C:\\Users\\ruben.sanz.garcia\\Desktop\\PracticasADgit\\practica5\\ADPractiva4_v2\\practica4.db");
+            connection = DriverManager.getConnection("jdbc:sqlite:C:\\Users\\ruben.sanz.garcia.STARK.000\\Desktop\\PracticasADgit\\practica5\\ADPractiva4_v2\\practica4.db");
             PreparedStatement statement = connection.prepareStatement("select * from image where title like ? and author like ?");
             statement.setString(1,"%" + title + "%");
             statement.setString(2,"%" + author + "%");

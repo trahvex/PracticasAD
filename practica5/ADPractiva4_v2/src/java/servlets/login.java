@@ -56,7 +56,7 @@ public class login extends HttpServlet {
             Class.forName("org.sqlite.JDBC");           
             
 
-            connection = DriverManager.getConnection("jdbc:sqlite:C:\\Users\\ruben.sanz.garcia\\Desktop\\PracticasADgit\\practica5\\ADPractiva4_v2\\practica4.db");
+            connection = DriverManager.getConnection("jdbc:sqlite:C:\\Users\\ruben.sanz.garcia.STARK.000\\Desktop\\PracticasADgit\\practica5\\ADPractiva4_v2\\practica4.db");
             query = "create table if not exists usuarios (id_usuario string primary key not null, password string)";
             statement = connection.prepareStatement(query);                        
             statement.executeUpdate();
