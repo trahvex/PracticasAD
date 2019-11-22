@@ -39,7 +39,8 @@ public class descargaImatge extends HttpServlet {
             throws ServletException, IOException {
         try (PrintWriter out = response.getWriter()) {
             byte[] fileContent = download(request.getParameter("filename"));
-            String filePath = "C:\\Users\\carles.salvador\\Desktop\\" + request.getParameter("filename");
+            String home = System.getProperty("user.home");
+            String filePath = home + "\\Downloads\\" + request.getParameter("filename");
             try {
                     FileOutputStream fos = new FileOutputStream(filePath);
                     BufferedOutputStream outputStream = new BufferedOutputStream(fos);
