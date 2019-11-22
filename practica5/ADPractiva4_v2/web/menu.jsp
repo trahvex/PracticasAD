@@ -32,6 +32,11 @@
             
             <h3><a href="/practica4/webresources/gestorImagenes/list">Listar imágenes</a><br><br></h3>
             
+            <h3> Selecciona id d'imatge a descarregar: </h3>
+            <form action="/practica4/webresources/gestorImagenes/descarga" method="POST">
+                <input type="text" name="id">
+            <button type="submit" class="btn btn-primary">Descarga imatge</button></form><br><br>
+            
            
             <form class= "card" id="buscarImatge" method="GET" onsubmit="addPath()">
                 <div class="card-body">

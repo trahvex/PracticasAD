@@ -5,7 +5,10 @@
  */
 package restad;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -34,7 +37,10 @@ import java.util.ArrayList;
 import javafx.util.Pair;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
 import javax.ws.rs.FormParam;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.ResponseBuilder;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 
@@ -136,7 +142,7 @@ public class GenericResource {
     @Path("register")
     @POST
     @Consumes(MediaType.MULTIPART_FORM_DATA)
-    @Produces(MediaType.TEXT_HTML)
+    @Produces(MediaType.TEXT_PLAIN)
     public String registerImage (@FormDataParam("title") String title, @FormDataParam("description") String description, @FormDataParam("keywords") String keywords,
             @FormDataParam("author") String author, @FormDataParam("creation") String crea_date, 
             @FormDataParam("imagen") InputStream uploadedInputStream, @FormDataParam("imagen") FormDataContentDisposition fileDetail){
@@ -184,8 +190,7 @@ public class GenericResource {
             statement.setString(8, author+"_"+fileDetail.getFileName()); 
             statement.executeUpdate();
             
-            String uploadedFileLocation = "C:\\Users\\ruben.sanz.garcia.STARK.000\\Desktop\\PracticasADgit\\practica5\\ADPractiva4_v2\\Imagenes\\" + fileDetail.getFileName();
-                         
+            String uploadedFileLocation = "C:\\Users\\ruben.sanz.garcia.STARK.000\\Desktop\\PracticasADgit\\practica5\\ADPractiva4_v2\\Imagenes\\" + author+"_"+fileDetail.getFileName();                         
             System.out.println("no es null"+ uploadedFileLocation);
             writeToFile(uploadedInputStream, uploadedFileLocation);
 
@@ -293,7 +298,7 @@ public class GenericResource {
             while (rs.next()){
                 html += "<b>id:</b> " + rs.getString(1) + "<br><b>title:</b> " + rs.getString(2) + "<br><b>description:</b> " + rs.getString(3)
                         + "<br><b>keywords:</b> " + rs.getString(4) + "<br><b>author:</b> " + rs.getString(5) + "<br><b>creation:</b> " + rs.getString(6) + "<br>"
-                        + "<a href=/practica4/modificarImagen.jsp?id="+ rs.getString(1) +"> Modificar Imagen </a> <br><br><br>";
+                        + "<a href=/practica4/modificarImagen.jsp?id="+ rs.getString(1) +"> Modificar Imagen </a><br>";
             }
 
         }catch (SQLException e) {
@@ -510,9 +515,50 @@ public class GenericResource {
         html += "</body> </html>";
         return html;
     }
-
     
     
+    
+    /**
+    * POST method to register a new image
+    * @param filename
+    * @return
+    */
+    @Path("descarga")
+    @POST
+    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+    @Produces(MediaType.APPLICATION_OCTET_STREAM)
+    public Response descarga (@FormParam("id") String id){
+        
+       // html = cabeceras("Descarga con éxito");
+        Connection connection = null;
+        String filename = null;
+        
+        try {
+            Class.forName("org.sqlite.JDBC");
+            connection = DriverManager.getConnection("jdbc:sqlite:C:\\Users\\ruben.sanz.garcia.STARK.000\\Desktop\\PracticasADgit\\practica5\\ADPractiva4_v2\\practica4.db");
+            PreparedStatement statement = connection.prepareStatement("select filename from image where id=?");
+            statement.setInt(1,Integer.parseInt(id));
+            ResultSet rs = statement.executeQuery();    
+            if (rs.next()) filename = rs.getString("filename");
+        }
+        catch(SQLException | ClassNotFoundException e ){
+          System.err.println("SQL EXCEPTION: " + e.getMessage());
+          return null;
+        }
+        finally{
+            cerrarConexion(connection);
+        } 
+        
+        
+        String filePath = "C:\\Users\\ruben.sanz.garcia.STARK.000\\Desktop\\PracticasADgit\\practica5\\ADPractiva4_v2\\Imagenes\\"+ filename;
+        System.out.println("Sending file: " + filePath);
+        
+        File file = new File(filePath);
+        ResponseBuilder response = Response.ok((Object)file);
+        response.header("Content-Disposition","attachment;filename="+filename);
+        return response.build();
+          
+    }  
     
     
     
