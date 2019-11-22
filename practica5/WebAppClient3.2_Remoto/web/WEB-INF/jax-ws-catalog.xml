@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<catalog xmlns="urn:oasis:names:tc:entity:xmlns:xml:catalog" prefer="system">
+    <system systemId="http://localhost:8080/GestorImagenes/GestorImagenes?wsdl" uri="wsdl/localhost_8080/GestorImagenes/GestorImagenes.wsdl"/>
+    <system systemId="http://localhost:8080/GestorImagenes/GestorImagenes?xsd=1" uri="wsdl/localhost_8080/GestorImagenes/GestorImagenes.xsd_1.xsd"/>
+    <system systemId="file:/F:/AD/GestorImagenes.wsdl" uri="wsdl/GestorImagenes.wsdl"/>
+    <system systemId="file:/F:/AD/GestorImagenes.xsd_1.xsd" uri="wsdl/GestorImagenes.xsd_1.xsd"/>
+</catalog>
