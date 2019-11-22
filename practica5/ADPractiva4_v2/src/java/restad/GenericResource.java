@@ -5,6 +5,11 @@
  */
 package restad;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import static java.lang.System.out;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -30,6 +35,8 @@ import javafx.util.Pair;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import javax.ws.rs.FormParam;
+import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
+import org.glassfish.jersey.media.multipart.FormDataParam;
 
 
 /**
@@ -58,9 +65,9 @@ public class GenericResource {
         "    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1, shrink-to-fit=no\">\n\n" +
         "    <link rel=\"stylesheet\" href=\"https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css\" integrity=\"sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm\" crossorigin=\"anonymous\">\n" +
         "    <title>"+ title +"</title>\n" +
-        "    </head><body>" +
-        "     <% if(session.getAttribute(\"usuario\") == null)"
-            + "response.sendRedirect(\"login.jsp\");%>  "
+        "    </head><body>" 
+        //"     <% if(session.getAttribute(\"usuario\") == null)"
+        //    + "response.sendRedirect(\"login.jsp\");%>  "
         );
     }
     
@@ -81,6 +88,40 @@ public class GenericResource {
         }
             html += "<a href='/practica4/'> <small> Volver al menú </small> </a>"; 
     }
+    
+    // save uploaded file to new location
+    private void writeToFile(InputStream uploadedInputStream,
+            String uploadedFileLocation) {
+
+            try {
+                    OutputStream out = new FileOutputStream(new File(
+                                    uploadedFileLocation));
+                    int read = 0;
+                    byte[] bytes = new byte[1024];
+
+                    out = new FileOutputStream(new File(uploadedFileLocation));
+                    while ((read = uploadedInputStream.read(bytes)) != -1) {
+                            out.write(bytes, 0, read);
+                    }
+                    out.flush();
+                    out.close();
+            } catch (IOException e) {
+
+                    e.printStackTrace();
+        }
+    }
+    
+    private void cerrarConexion(Connection connection) {
+        try{
+           if(connection != null)
+               connection.close();
+           System.out.println("closed connection");
+         }
+         catch(SQLException e){
+           // connection close failed.
+           System.err.println(e.getMessage());
+        }
+    }
 
     
     /**
@@ -90,78 +131,78 @@ public class GenericResource {
     * @param keywords
     * @param author
     * @param crea_date
-    * @param fileName
+    * @param uploadedInputStream
+    * @param fileDetail
     * @return
     */
     @Path("register")
     @POST
-    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
     @Produces(MediaType.TEXT_HTML)
-    public String registerImage (@FormParam("title") String title, @FormParam("description") String description, @FormParam("keywords") String keywords,
-            @FormParam("author") String author, @FormParam("creation") String crea_date, @FormParam("fileName") String fileName){
+    public String registerImage (@FormDataParam("title") String title, @FormDataParam("description") String description, @FormDataParam("keywords") String keywords,
+            @FormDataParam("author") String author, @FormDataParam("creation") String crea_date, 
+            @FormDataParam("imagen") InputStream uploadedInputStream, @FormDataParam("imagen") FormDataContentDisposition fileDetail){
         
-            html = cabeceras("Exito!");
-        
-        
-            Connection connection = null;
-            try {
-                        
-                PreparedStatement statement;
-                String query;
-                Class.forName("org.sqlite.JDBC");           
+        html = cabeceras("Exito!");
 
-                connection = DriverManager.getConnection("jdbc:sqlite:/Users/carles/Desktop/PracticasAD/practica4/ADpractica4-proyecto/practica4.db");       
-                query = "create table if not exists image (id integer primary key, title varchar (256) NOT NULL, description varchar (1024) NOT NULL, keywords "
-                + "varchar (256) NOT NULL, author varchar (255) NOT NULL, creation_date varchar (10) NOT NULL, storage_date varchar (10) NOT NULL, fileName varchar (512) NOT NULL UNIQUE, "
-                + "foreign key (author) references usuarios(id_usuario))";
-                statement = connection.prepareStatement(query);
-                statement.executeUpdate();              
-                
-                String storage_date;
-                //cogemos decha actual
-                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-                LocalDateTime dateTime = LocalDateTime.now();
-                storage_date = dateTime.format(formatter);
-                
-                                
-                query = "select max(id) from image";
-                statement = connection.prepareStatement(query);
-                ResultSet rs = statement.executeQuery();
-                int newId = 1;
-                if(rs.next())
-                    newId= rs.getInt(1) + 1;                 
-                        
-                query = "insert into image (id, title, description, keywords, author, creation_date, storage_date, filename)"
-                        + "values(?, ?, ?, ?, ?, ?, ?, ?)";
-                statement = connection.prepareStatement(query);
-                statement.setInt(1, newId); //id imagen
-                statement.setString(2, title); //titulo imagen
-                statement.setString(3, description); //descripcion imagen
-                statement.setString(4, keywords); //palabras clave
-                statement.setString(5, author); //autor
-                statement.setString(6, crea_date); //fecha creacion  
-                statement.setString(7, storage_date); //fecha alta (actual)
-                statement.setString(8, fileName);  //nombre fichero           
-                statement.executeUpdate();
-                
-                html = html + "<h2> Se ha registrado la imagen correctamente </h2>  ";
-                
-            } catch (SQLException | ClassNotFoundException e) {
-                System.err.println(e.getMessage());
-                out.println(e.getMessage());
-            }finally {
-                try {
-                    if (connection != null) {
-                        connection.close();
-                    }
-                } catch (SQLException e) {
-                    // connection close failed.
-                    System.err.println(e.getMessage());
-                }
-            }
+        Connection connection = null;
+        try {
+            //preparo conexion
+            PreparedStatement statement;
+            String query;
+            Class.forName("org.sqlite.JDBC");           
+
+            connection = DriverManager.getConnection("jdbc:sqlite:C:\\Users\\ruben.sanz.garcia\\Desktop\\PracticasADgit\\practica5\\ADPractiva4_v2\\practica4.db");       
+            //creo tabla de imagenes si no existe
+            query = "create table if not exists image (id integer primary key, title varchar (256) NOT NULL, description varchar (1024) NOT NULL, keywords "
+            + "varchar (256) NOT NULL, author varchar (255) NOT NULL, creation_date varchar (10) NOT NULL, storage_date varchar (10) NOT NULL, fileName varchar (512) NOT NULL UNIQUE, "
+            + "foreign key (author) references usuarios(id_usuario))";
+            statement = connection.prepareStatement(query);
+            statement.executeUpdate();              
             
-        html += "<a href='/practica4/'> <small> Volver al menú </small> </a>";    
-        
+            //cogemos fecha actual
+            String storage_date;
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+            LocalDateTime dateTime = LocalDateTime.now();
+            storage_date = dateTime.format(formatter);
+            
+            query = "select max(id) from image";
+            statement = connection.prepareStatement(query);
+            ResultSet rs = statement.executeQuery();
+            int newId = 1;
+            if(rs.next())
+                newId= rs.getInt(1) + 1;                 
+            //registro la imagen en la bd
+            query = "insert into image (id, title, description, keywords, author, creation_date, storage_date, filename)"
+                    + "values(?, ?, ?, ?, ?, ?, ?, ?)";
+            statement = connection.prepareStatement(query);
+            statement.setInt(1, newId); //id imagen
+            statement.setString(2, title); //titulo imagen
+            statement.setString(3, description); //descripcion imagen
+            statement.setString(4, keywords); //palabras clave
+            statement.setString(5, author); //autor
+            statement.setString(6, crea_date); //fecha creacion  
+            statement.setString(7, storage_date); //fecha alta (actual)
+            statement.setString(8, author+"_"+fileDetail.getFileName()); 
+            statement.executeUpdate();
+            
+            String uploadedFileLocation = System.getProperty("user.dir")+ "/Imagenes/" + fileDetail.getFileName();
+                         
+            System.out.println("no es null"+ uploadedFileLocation);
+            writeToFile(uploadedInputStream, uploadedFileLocation);
+
+
+            html = html + "<h2> Se ha registrado la imagen correctamente </h2>  ";
+
+        } catch (SQLException | ClassNotFoundException e) {
+            System.err.println(e.getMessage());
+            out.println(e.getMessage());
+        }
+        finally{
+            cerrarConexion(connection);
+        } 
+            
+        html += "<a href='/practica4/'> <small> Volver al menú </small> </a>";
         html += "</body> </html>";
                 
         return html;
@@ -170,91 +211,55 @@ public class GenericResource {
     /**
     * POST method to register a new image
     * @param id
-    * @param title
-    * @param description
-    * @param keywords
-    * @param author
-    * @param crea_date
-    * @param fileName
+    * @param camp
+    * @param valor
     * @return
     */
     @Path("modify")
     @POST
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     @Produces(MediaType.TEXT_HTML)
-    public String modifyImage (@FormParam("id") int id, @FormParam("title") String title, @FormParam("description") String description,
-            @FormParam("keywords") String keywords, @FormParam("author") String author, @FormParam("creation") String crea_date, @FormParam("fileName") String fileName){
+    public String modifyImage (@FormParam("id") int id, @FormParam("camp") String camp, @FormParam("valor") String valor ){
         
         html = cabeceras("Modificado");
-        //CAMBIARLO PARA QUE SE PAREZCA AL DE LA PRACTICA 3
-        
-        String valor = request.getParameter("valor");
-        Image img = searchbyId(id);
-        if (img == null) out.println("No s'ha pogut modificar l'imatge");
-        int returnCode = 0;
-
-        switch(request.getParameter("camp")) {
+        //if (img == null) out.println("No s'ha pogut modificar l'imatge");
+        Connection connection = null;
+        PreparedStatement statement;
+        String query = null;
+        try{
+            Class.forName("org.sqlite.JDBC");
+            connection = DriverManager.getConnection("jdbc:sqlite:C:\\Users\\ruben.sanz.garcia\\Desktop\\PracticasADgit\\practica5\\ADPractiva4_v2\\practica4.db");    
+            
+            switch(camp) {
             case "Autor":
-                img.setAuthor(valor);
+                query = "update image set author=? where id=?";
                 break;                                        
-            case "Titol":
-                img.setTitle(valor);
-                break;                    
-            case "Data Creacio":
-                img.setCreaDate(valor);
+            case "Titol":                
+                query = "update image set title=? where id=?";
                 break;                    
             case "Keywords":
-                img.setKeywords(valor);
+                query = "update image set keywords=? where id=?";
                 break;                    
             case "Descripcio":
-                img.setDescription(valor);
+                query = "update image set description=? where id=?";
                 break;
-        }
-
+            }
+            
+            statement = connection.prepareStatement(query);
+            statement.setString(1, valor);           
+            statement.setInt(2, id);            
+            statement.executeUpdate();
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(GenericResource.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SQLException ex) {
+            Logger.getLogger(GenericResource.class.getName()).log(Level.SEVERE, null, ex);
+        }finally{
+            cerrarConexion(connection);
+        } 
+         html += "<h2> Modificación ejecutada con exito </h2>"
+                    + "<a href=\"/practica4/menu.jsp\">"
+                    + "<small> Volver al menú </small></a>";
         
-        /*Connection connection = null;
-            try {                        
-                PreparedStatement statement;
-                String query;
-                Class.forName("org.sqlite.JDBC");
-                connection = DriverManager.getConnection("jdbc:sqlite:/Users/carles/Desktop/PracticasAD/practica4/ADpractica4-proyecto/practica4.db");       
-                 
-                //
-                
-                
-                query = "update image set title=?, description=? , keywords=?, filename=? ,author=? where id=?";
-                statement = connection.prepareStatement(query);
-                statement.setString(1, title); //titulo imagen
-                statement.setString(2, description); //descripcion imagen
-                statement.setString(3, keywords); //palabras clave
-                statement.setString(4, fileName); 
-                statement.setString(5, author); 
-                statement.setInt(6, id);
-                statement.executeUpdate();
-                
-                //todo chido pos te presenta mensaje de exito
-                html += "<h2> Modificación ejecutada con exito </h2>"
-                        + "<b>Información actual:</b><br>"
-                        + "<br>&nbsp&nbsp&nbsp&nbspTítulo: "+title+"<br>"
-                        + "&nbsp&nbsp&nbsp&nbspDescripción: "+description+"<br>"
-                        + "&nbsp&nbsp&nbsp&nbspPalabras clave: "+keywords+"<br>"
-                        + "&nbsp&nbsp&nbsp&nbspNombre del fichero: "+fileName+"<br>"
-                        + "&nbsp&nbsp&nbsp&nbspAutor: "+author+"<br><br>"
-                        + "<a href=\"/practica4/menu.jsp\">"
-                        + "<small> Volver al menú </small></a>";
-                
-            } catch (SQLException | ClassNotFoundException e) {
-                System.err.println(e.getMessage());
-            }finally {
-                try {
-                    if (connection != null) {
-                        connection.close();
-                    }
-                } catch (SQLException e) {
-                    // connection close failed.
-                    System.err.println(e.getMessage());
-                }
-           }*/
         
         return html;
     }
@@ -269,10 +274,8 @@ public class GenericResource {
     @GET
     @Produces(MediaType.TEXT_HTML)
     public String listImages (){
-        html = cabeceras("Lista");
-        
-        html = html + "<h1> Lista imágenes </h1>  ";
-        
+        html = cabeceras("Lista");        
+        html = html + "<h1> Lista imágenes </h1>  ";       
         PreparedStatement statement;
         String query;
         try {           
@@ -280,41 +283,40 @@ public class GenericResource {
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(GenericResource.class.getName()).log(Level.SEVERE, null, ex);
         }
-                Connection connection = null;
-                List<String> authorPics = new ArrayList<String>();
-                List<Pair<String,String>> nombresFotos = new ArrayList<Pair<String,String>>();
-                try{
-                    connection = DriverManager.getConnection("jdbc:sqlite:/Users/carles/Desktop/PracticasAD/practica4/ADpractica4-proyecto/practica4.db");
-                       
-                    //guardaremos tambien nombre y archivo de las fotos
-                    query = "select * from image";
-                    statement = connection.prepareStatement(query);
-                    ResultSet rs = statement.executeQuery();
-                    
-                    while (rs.next()){
-                        html += "<b>id:</b> " + rs.getString(1) + "<br><b>title:</b> " + rs.getString(2) + "<br><b>description:</b> " + rs.getString(3)
-                                + "<br><b>keywords:</b> " + rs.getString(4) + "<br><b>author:</b> " + rs.getString(5) + "<br><b>creation:</b> " + rs.getString(6) + "<br>"
-                                + "<a href=/practica4/modificarImagen.jsp?id="+ rs.getString(1) +"> Modificar Imagen </a> <br><br><br>";
-                    }
-                    
-                }catch (SQLException e) {
-                    System.err.println(e.getMessage());
-                    out.println(e.getMessage());
-                }finally {
-                    try {
-                        if (connection != null) {
-                            connection.close();
-                        }
-                    } catch (SQLException e) {
-                        System.err.println(e.getMessage());
-                    }
-                }
+        Connection connection = null;
+        List<String> authorPics = new ArrayList<String>();
+        List<Pair<String,String>> nombresFotos = new ArrayList<Pair<String,String>>();
+        try{
+            connection = DriverManager.getConnection("jdbc:sqlite:C:\\Users\\ruben.sanz.garcia\\Desktop\\PracticasADgit\\practica5\\ADPractiva4_v2\\practica4.db");
+
+            //guardaremos tambien nombre y archivo de las fotos
+            query = "select * from image";
+            statement = connection.prepareStatement(query);
+            ResultSet rs = statement.executeQuery();
+
+            while (rs.next()){
+                html += "<b>id:</b> " + rs.getString(1) + "<br><b>title:</b> " + rs.getString(2) + "<br><b>description:</b> " + rs.getString(3)
+                        + "<br><b>keywords:</b> " + rs.getString(4) + "<br><b>author:</b> " + rs.getString(5) + "<br><b>creation:</b> " + rs.getString(6) + "<br>"
+                        + "<a href=/practica4/modificarImagen.jsp?id="+ rs.getString(1) +"> Modificar Imagen </a> <br><br><br>";
+            }
+
+        }catch (SQLException e) {
+            System.err.println(e.getMessage());
+            out.println(e.getMessage());
+        }
+        finally{
+            cerrarConexion(connection);
+        } 
                 
         html += "<a href='/practica4/'> <small> Volver al menú </small> </a>";    
         html += "</body> </html>";
         return html;
         
     }
+    
+    
+    
+    
     
     
     /**
@@ -331,7 +333,7 @@ public class GenericResource {
         html += "<body><h2>Búsqueda por ID</h2>";
         try {
             Class.forName("org.sqlite.JDBC");
-            connection = DriverManager.getConnection("jdbc:sqlite:/Users/carles/Desktop/PracticasAD/practica4/ADpractica4-proyecto/practica4.db");
+            connection = DriverManager.getConnection("jdbc:sqlite:C:\\Users\\ruben.sanz.garcia\\Desktop\\PracticasADgit\\practica5\\ADPractiva4_v2\\practica4.db");
             PreparedStatement statement = connection.prepareStatement("select * from image where id = ?");
             statement.setInt(1,id);
             printResultados(statement.executeQuery());        
@@ -341,15 +343,7 @@ public class GenericResource {
           return null;
         }
         finally{
-          try{
-            if(connection != null)
-              connection.close();
-            System.out.println("closed connection");
-          }
-          catch(SQLException e){
-            // connection close failed.
-            System.err.println(e.getMessage());
-          }
+            cerrarConexion(connection);
         } 
         
         html += "</body> </html>";
@@ -371,7 +365,7 @@ public class GenericResource {
         html += "<body><h2>Búsqueda por título</h2>";
         try {
             Class.forName("org.sqlite.JDBC");
-            connection = DriverManager.getConnection("jdbc:sqlite:/Users/carles/Desktop/PracticasAD/practica4/ADpractica4-proyecto/practica4.db");
+            connection = DriverManager.getConnection("jdbc:sqlite:C:\\Users\\ruben.sanz.garcia\\Desktop\\PracticasADgit\\practica5\\ADPractiva4_v2\\practica4.db");
             PreparedStatement statement = connection.prepareStatement("select * from image where title like ?");
             statement.setString(1,'%' + title + '%');           
             printResultados(statement.executeQuery());      
@@ -382,15 +376,7 @@ public class GenericResource {
           return null;
         }
         finally{
-          try{
-            if(connection != null)
-              connection.close();
-            System.out.println("closed connection");
-          }
-          catch(SQLException e){
-            // connection close failed.
-            System.err.println(e.getMessage());
-          }
+            cerrarConexion(connection);
         } 
         
         html += "</body> </html>";
@@ -412,7 +398,7 @@ public class GenericResource {
         html += "<body><h2>Búsqueda por fecha de creación</h2>";
         try {
             Class.forName("org.sqlite.JDBC");
-            connection = DriverManager.getConnection("jdbc:sqlite:/Users/carles/Desktop/PracticasAD/practica4/ADpractica4-proyecto/practica4.db");
+            connection = DriverManager.getConnection("jdbc:sqlite:C:\\Users\\ruben.sanz.garcia\\Desktop\\PracticasADgit\\practica5\\ADPractiva4_v2\\practica4.db");
             PreparedStatement statement = connection.prepareStatement("select * from image where creation_date like ?");
             statement.setString(1,date);
             printResultados(statement.executeQuery());      
@@ -423,15 +409,7 @@ public class GenericResource {
           return null;
         }
         finally{
-          try{
-            if(connection != null)
-              connection.close();
-            System.out.println("closed connection");
-          }
-          catch(SQLException e){
-            // connection close failed.
-            System.err.println(e.getMessage());
-          }
+            cerrarConexion(connection);
         } 
         
         html += "</body> </html>";
@@ -453,7 +431,7 @@ public class GenericResource {
         html += "<body><h2>Búsqueda por autor</h2>";
         try {
             Class.forName("org.sqlite.JDBC");
-            connection = DriverManager.getConnection("jdbc:sqlite:/Users/carles/Desktop/PracticasAD/practica4/ADpractica4-proyecto/practica4.db");
+            connection = DriverManager.getConnection("jdbc:sqlite:C:\\Users\\ruben.sanz.garcia\\Desktop\\PracticasADgit\\practica5\\ADPractiva4_v2\\practica4.db");
             PreparedStatement statement = connection.prepareStatement("select * from image where author like ?");
             statement.setString(1, '%' + author + '%');
             printResultados(statement.executeQuery());      
@@ -464,15 +442,7 @@ public class GenericResource {
           return null;
         }
         finally{
-          try{
-            if(connection != null)
-              connection.close();
-            System.out.println("closed connection");
-          }
-          catch(SQLException e){
-            // connection close failed.
-            System.err.println(e.getMessage());
-          }
+            cerrarConexion(connection);
         } 
         
         html += "</body> </html>";
@@ -494,7 +464,7 @@ public class GenericResource {
         html += "<body><h2>Búsqueda por palabras clave</h2>";
         try {
             Class.forName("org.sqlite.JDBC");
-            connection = DriverManager.getConnection("jdbc:sqlite:/Users/carles/Desktop/PracticasAD/practica4/ADpractica4-proyecto/practica4.db");
+            connection = DriverManager.getConnection("jdbc:sqlite:C:\\Users\\ruben.sanz.garcia\\Desktop\\PracticasADgit\\practica5\\ADPractiva4_v2\\practica4.db");
             PreparedStatement statement = connection.prepareStatement("select * from image where keywords like ?");
             statement.setString(1, '%' + keywords + '%');
             printResultados(statement.executeQuery());      
@@ -505,15 +475,7 @@ public class GenericResource {
           return null;
         }
         finally{
-          try{
-            if(connection != null)
-              connection.close();
-            System.out.println("closed connection");
-          }
-          catch(SQLException e){
-            // connection close failed.
-            System.err.println(e.getMessage());
-          }
+            cerrarConexion(connection);
         } 
         
         html += "</body> </html>";
@@ -534,7 +496,7 @@ public class GenericResource {
         html += "<body><h2>Búsqueda combinada título y palabras clave</h2>";
         try {
             Class.forName("org.sqlite.JDBC");
-            connection = DriverManager.getConnection("jdbc:sqlite:/Users/carles/Desktop/PracticasAD/practica4/ADpractica4-proyecto/practica4.db");
+            connection = DriverManager.getConnection("jdbc:sqlite:C:\\Users\\ruben.sanz.garcia\\Desktop\\PracticasADgit\\practica5\\ADPractiva4_v2\\practica4.db");
             PreparedStatement statement = connection.prepareStatement("select * from image where title like ? and author like ?");
             statement.setString(1,"%" + title + "%");
             statement.setString(2,"%" + author + "%");
@@ -546,20 +508,14 @@ public class GenericResource {
           return null;
         }
         finally{
-          try{
-            if(connection != null)
-              connection.close();
-            System.out.println("closed connection");
-          }
-          catch(SQLException e){
-            // connection close failed.
-            System.err.println(e.getMessage());
-          }
+            cerrarConexion(connection);
         } 
         
         html += "</body> </html>";
         return html;
     }
+
+    
     
     
     

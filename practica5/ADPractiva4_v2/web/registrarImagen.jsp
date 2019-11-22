@@ -26,19 +26,20 @@
                 response.sendRedirect("login.jsp");
             %>
             <h2>Registra tu imagen:</h2>
-            <form action="/practica4/webresources/gestorImagenes/register" method="POST">
+            <form action="/practica4/webresources/gestorImagenes/register" method="POST" enctype="multipart/form-data">
                 Título: 
                 <input type="text" name="title" required/> <br><br>
                 Descripción:
                 <input type="text" name="description" required/> <br><br>
                 Palabras clave (separadas por comas y sin espacios): 
                 <input type="text" name="keywords" required/> <br><br>
-                Autor: 
-                <input type="text" name="author" required/> <br><br>
+                <%
+                  out.println("<input type=\"hidden\" name=\"author\" value=\"" + session.getAttribute("usuario") + "\"required/>");  
+                %>
                 Fecha de creación:  
                 <input type="date" name="creation" required/> <br><br>
-                Nombre del fichero:
-                <input type="text" name="fileName" required/> <br><br>
+                Fichero:
+                <input type="file" name="imagen" required/> <br><br>
                 
                 <input type="submit" value="Enviar" required/> <br><br>
             </form>

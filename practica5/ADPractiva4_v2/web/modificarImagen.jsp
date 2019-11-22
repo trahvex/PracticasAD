@@ -37,13 +37,14 @@
             %>
             
             <br>
-            Imatge seleccionada: request.getParameter("id")
+            <h2>
+            <% out.println("Imatge seleccionada:"+ request.getParameter("id"));%>
+            </h2>
             <br>
-            
+                              
             <!-- AQUI DEBERIA IMPRIMIRSE INFO DEL USER -->            
             
-            <h2>Modifica:</h2>
-            <form action="\practica4\webresources\gestorImagenes\modify" method="POST">
+            <form action="\practica4\webresources\gestorImagenes\modify" method="POST" >
                 <div class="card-body">
                     <div class="card-title"><h4>Modifica l'imatge</h4></div>
                     <div class="form-group" >
@@ -55,7 +56,6 @@
                           <option>Autor</option>
                           <option>Titol</option>
                           <option>Descripcio</option>
-                          <option>Data Creacio</option>
                           <option>Keywords</option>
                         </select>
                     </div>
@@ -66,19 +66,7 @@
                     <button type="submit" class="btn btn-primary">Modifica</button>
                 </div>
             </form><br><br>
-            <!--%
-                //escribe el formulario con los datos que tiene la foto actualmente
-                out.write("<h2>Modifica:</h2>"
-                        + "<form action=\"\\practica4\\webresources\\gestorImagenes\\modify\" method=\"POST\">"
-                        + "Título:<input type=\"text\" name=\"title\"> <br><br>"
-                        + "Descripción:<input type=\"text\" name=\"description\"> <br><br>"
-                        + "Palabras clave (separadas por comas y sin espacios):<input type=\"text\" name=\"keywords\"> <br><br>"
-                        + "Fichero de la imagen:<input type=\"text\" name=\"fileName\"/> <br><br>"
-                        + "Autor:<input type=\"text\" name=\"author\" /> <br><br>"
-                        + "<input type=\"hidden\" name=\"id\"\" value=\"" + request.getParameter("id") + "\">" 
-                        + "<input type=\"submit\" value=\"Enviar\" /> <br><br>"
-                        + "</form>");
-            %-->
+            
             <a href="menu.jsp">
                 <small> Volver al menú </small>
             </a>
