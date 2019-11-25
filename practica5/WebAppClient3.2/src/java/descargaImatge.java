@@ -49,7 +49,7 @@ public class descargaImatge extends HttpServlet {
 
                     System.out.println("Received file: " + filePath);
                     out.println("<h1>Imatge descarregada amb exit!</h1>");
-                    out.println("Path: C:\\Users\\carles.salvador\\Desktop\\" + request.getParameter("filename"));
+                    out.println("Path: " + filePath);
 
                 } catch (IOException ex) {
                     System.err.println(ex.getMessage());

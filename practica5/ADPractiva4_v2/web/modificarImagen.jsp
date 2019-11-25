@@ -42,8 +42,7 @@
             </h2>
             <br>
                               
-            <!-- AQUI DEBERIA IMPRIMIRSE INFO DEL USER -->            
-            
+                 
             <form action="\practica4\webresources\gestorImagenes\modify" method="POST" >
                 <div class="card-body">
                     <div class="card-title"><h4>Modifica l'imatge</h4></div>
