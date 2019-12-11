@@ -1,17 +1,20 @@
 package com.example.flycheap;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.os.Build;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.amadeus.Amadeus;
@@ -30,7 +33,13 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -122,9 +131,8 @@ public class MainActivity extends AppCompatActivity {
         return muestraAero;
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     public void amadeus_call(View view){
-
-
 
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
 
@@ -140,24 +148,63 @@ public class MainActivity extends AppCompatActivity {
         if(or.length() > 3 && des.length() > 3) {
             or = or.substring(0,3);
             des = des.substring(0,3);
-            logMessage(or + "  " + des);
             try {
                 FlightOffer[] flightOffers = amadeus.shopping.flightOffers.get(Params.with("origin", or).and("destination", des).and("departureDate", "2019-12-24"));
-
-                procesarRespuesta(flightOffers); //TODO esto puede devolver un string que se va al texteview
-
-                if(flightOffers != null){
-                    logMessage(flightOffers[0].getOfferItems()[0].getPrice().toString());
-                }
+                String vuelos = procesarRespuesta(flightOffers); // Esto va directo al textView
+                final TextView textView = (TextView) findViewById(R.id.resultados);
+                textView.setText(vuelos);
             } catch (ResponseException e) {
                 e.printStackTrace();
             }
         }
     }
 
-    private void procesarRespuesta(FlightOffer[] flightOffers) {
-        //TODO: rellenar esta funcion
+    /*
+    Funcion auxiliar para ordenar HashMap por value
+     */
+    public static HashMap<String, Double> sortByValue(HashMap<String, Double> hm)
+    {
+        // Create a list from elements of HashMap
+        List<Map.Entry<String, Double> > list =
+                new LinkedList<Map.Entry<String, Double> >(hm.entrySet());
 
+        // Sort the list
+        Collections.sort(list, new Comparator<Map.Entry<String, Double> >() {
+            public int compare(Map.Entry<String, Double> o1,
+                               Map.Entry<String, Double> o2)
+            {
+                return (o1.getValue()).compareTo(o2.getValue());
+            }
+        });
+
+        // put data from sorted list to hashmap
+        HashMap<String, Double> temp = new LinkedHashMap<String, Double>();
+        for (Map.Entry<String, Double> aa : list) {
+            temp.put(aa.getKey(), aa.getValue());
+        }
+        return temp;
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    private String procesarRespuesta(FlightOffer[] flightOffers) {
+        String prices = new String();
+        HashMap<String, Double> dadesVols = new HashMap<>();
+        for (int i=0; i<flightOffers.length && i < 10; ++i){ // Mostramos maximo 15 vuelos
+            double price = flightOffers[i].getOfferItems()[0].getPricePerAdult().getTotal();
+
+            FlightOffer.FlightSegment details = flightOffers[i].getOfferItems()[0].getServices()[0].getSegments()[0].getFlightSegment();
+            String horaSortida = details.getDeparture().getAt().substring(11,16);
+            String horaArribada = details.getArrival().getAt().substring(11,16);
+            String dadaVol = "SORTIDA: " + horaSortida + "  ARRIBADA: " + horaArribada;
+            dadesVols.put(dadaVol,price);
+
+
+        }
+        dadesVols = sortByValue(dadesVols);
+        for (Map.Entry<String, Double> entry : dadesVols.entrySet()) {
+            prices = prices + entry.getKey() + ", PREU=" + entry.getValue() + "€" + "\n\n";
+        }
+        return prices;
     }
 
     private void logMessage(String msg) {
