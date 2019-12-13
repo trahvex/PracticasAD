@@ -31,11 +31,14 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -49,6 +52,8 @@ public class MainActivity extends AppCompatActivity {
 
     private static final String CLIENT_ID = "lRHCrMLUTG0HYNVRlcrXLhv2mWAXvo5q";
     private static final String SECRET_ID = "6ByzdfPxfDRlELZ3";
+
+
 
     ArrayList<String> airports = new ArrayList<>();
 
@@ -151,12 +156,51 @@ public class MainActivity extends AppCompatActivity {
             try {
                 FlightOffer[] flightOffers = amadeus.shopping.flightOffers.get(Params.with("origin", or).and("destination", des).and("departureDate", "2019-12-24"));
                 String vuelos = procesarRespuesta(flightOffers); // Esto va directo al textView
-                final TextView textView = (TextView) findViewById(R.id.resultados);
-                textView.setText(vuelos);
+                final TextView resultadosView = (TextView) findViewById(R.id.resultados);
+                resultadosView.setText(vuelos);
+                String weather = tiempoEnDestino(des);
+                if (weather!=null) Log.d("JSON", weather);
+                final TextView weatherView = (TextView) findViewById(R.id.weatherView);
+                weatherView.setText(weather);
             } catch (ResponseException e) {
                 e.printStackTrace();
             }
         }
+    }
+
+    private String tiempoEnDestino(String destino) {
+        String BASE_URL = "http://api.openweathermap.org/data/2.5/weather?q=";
+        String APIKEY = "8873f2dbd3b95e6de026850abb07f4df";
+        HttpURLConnection con = null ;
+        InputStream is = null;
+        destino = "London";
+        try {
+            con = (HttpURLConnection) ( new URL(BASE_URL + destino + "&appid=" + APIKEY)).openConnection();
+            con.setRequestMethod("GET");
+            con.setDoInput(true);
+            con.setDoOutput(true);
+            con.connect();
+
+            // Let's read the response
+            StringBuffer buffer = new StringBuffer();
+            is = con.getInputStream();
+            BufferedReader br = new BufferedReader(new InputStreamReader(is));
+            String line = null;
+            while (  (line = br.readLine()) != null )
+                buffer.append(line + "\r\n");
+
+            is.close();
+            con.disconnect();
+            return buffer.toString();
+        }
+        catch(Throwable t) {
+            t.printStackTrace();
+        }
+        finally {
+            try { is.close(); } catch(Throwable t) {}
+            try { con.disconnect(); } catch(Throwable t) {}
+        }
+        return null;
     }
 
     /*
@@ -189,20 +233,25 @@ public class MainActivity extends AppCompatActivity {
     private String procesarRespuesta(FlightOffer[] flightOffers) {
         String prices = new String();
         HashMap<String, Double> dadesVols = new HashMap<>();
-        for (int i=0; i<flightOffers.length && i < 10; ++i){ // Mostramos maximo 15 vuelos
+        for (int i=0; i<flightOffers.length; ++i){
             double price = flightOffers[i].getOfferItems()[0].getPricePerAdult().getTotal();
 
             FlightOffer.FlightSegment details = flightOffers[i].getOfferItems()[0].getServices()[0].getSegments()[0].getFlightSegment();
             String horaSortida = details.getDeparture().getAt().substring(11,16);
             String horaArribada = details.getArrival().getAt().substring(11,16);
-            String dadaVol = "SORTIDA: " + horaSortida + "  ARRIBADA: " + horaArribada;
+            String carrierCode = details.getCarrierCode();
+            String dadaVol = "AEROLINEA: " + carrierCode + " SORTIDA: " + horaSortida + "  ARRIBADA: " + horaArribada;
             dadesVols.put(dadaVol,price);
 
 
         }
-        dadesVols = sortByValue(dadesVols);
-        for (Map.Entry<String, Double> entry : dadesVols.entrySet()) {
-            prices = prices + entry.getKey() + ", PREU=" + entry.getValue() + "€" + "\n\n";
+        dadesVols = sortByValue(dadesVols); // Ordenem per preu
+        Iterator iterator = dadesVols.entrySet().iterator();
+        int i = 0;
+        while (iterator.hasNext() && i<8) { // Màxim 8 resultats
+            Map.Entry me2 = (Map.Entry) iterator.next();
+            prices = prices + me2.getKey() + ", PREU=" + me2.getValue() + "€" + "\n\n";
+            ++i;
         }
         return prices;
     }
