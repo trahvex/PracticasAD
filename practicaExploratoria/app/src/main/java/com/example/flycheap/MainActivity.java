@@ -7,6 +7,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.app.DatePickerDialog;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.StrictMode;
@@ -14,6 +15,8 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
+import android.widget.DatePicker;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -94,7 +97,6 @@ public class MainActivity extends AppCompatActivity {
                 destinos.showDropDown();
             }
         });
-
     }
 
     public ArrayList<String> processAirports() {
@@ -149,19 +151,22 @@ public class MainActivity extends AppCompatActivity {
 
         String or = origenes.getText().toString();
         String des = destinos.getText().toString();
+        EditText dateText = this.findViewById(R.id.dateText);
+        String date = dateText.getText().toString();
+        Log.d("DATE", date);
 
         if(or.length() > 3 && des.length() > 3) {
             or = or.substring(0,3);
             des = des.substring(0,3);
             try {
-                FlightOffer[] flightOffers = amadeus.shopping.flightOffers.get(Params.with("origin", or).and("destination", des).and("departureDate", "2019-12-24"));
+                FlightOffer[] flightOffers = amadeus.shopping.flightOffers.get(Params.with("origin", or).and("destination", des).and("departureDate", date));
                 String vuelos = procesarRespuesta(flightOffers); // Esto va directo al textView
                 final TextView resultadosView = (TextView) findViewById(R.id.resultados);
                 resultadosView.setText(vuelos);
-                String weather = tiempoEnDestino(des);
-                if (weather!=null) Log.d("JSON", weather);
-                final TextView weatherView = (TextView) findViewById(R.id.weatherView);
-                weatherView.setText(weather);
+                //String weather = tiempoEnDestino(des);
+                //if (weather!=null) Log.d("JSON", weather);
+                //final TextView weatherView = (TextView) findViewById(R.id.weatherView);
+                //weatherView.setText("hola");
             } catch (ResponseException e) {
                 e.printStackTrace();
             }
